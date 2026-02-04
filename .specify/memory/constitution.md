@@ -1,55 +1,61 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!-- SYNC IMPACT REPORT
+  - Version change: 1.2.0 → 1.3.0
+  - Modified principles: Rule of Separation (updated to include Next.js requirement), Rule of Isolation (retained), Tech Stack Integrity (updated with brown-yellow theme requirement), Auth Law (updated), Spec-First Development (retained)
+  - Added sections: None
+  - Removed sections: Additional Constraints (replaced with new constraints)
+  - Templates requiring updates: .specify/templates/plan-template.md (⚠ pending), .specify/templates/spec-template.md (⚠ pending), .specify/templates/tasks-template.md (⚠ pending)
+  - Follow-up TODOs: None
+-->
+# Todo App Constitution - Supreme Law
 
-## Core Principles
+## Core Principles (Supreme Laws)
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Rule of Separation (SUPREME LAW)
+Business logic kabhi bhi API routes (main.py) mein nahi likhi jayegi. Saara logic /skills folder mein 'Reusable Agent Skills' ke taur par hoga. Frontend components must be built using Next.js 16+ with App Router, following component-based architecture. Yeh hamari sabse important rule hai jo har haal mein follow ki jayegi.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Rule of Isolation (SUPREME LAW)
+Har database query mein user_id ka check lazmi hoga taake ek user doosre ka data na dekh sakay. Yeh hamari sabse important rule hai jo har haal mein follow ki jayegi.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### Tech Stack Integrity
+Backend uses FastAPI + SQLModel + Neon DB. Frontend uses Next.js 16+ (App Router) + TypeScript (strict mode) + Tailwind CSS with custom brown-yellow theme as specified in the design guidelines.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Auth Law
+Saare endpoints protected honge aur JWT tokens verify karenge. Authentication flow includes signup/login with proper token storage and inclusion in all API requests.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### Spec-First Development
+Koi bhi code tab tak change nahi hoga jab tak pehle /specs folder ki markdown files update na ho jayein.
 
-### [PRINCIPLE_6_NAME]
+## Additional Constraints
 
+### Visual Identity Requirements
+- **Primary Dark Brown:** #3E2723 (main backgrounds, headers)
+- **Light Brown:** #8D6E63 (secondary elements, cards)
+- **Accent Yellow:** #FFC107 (buttons, highlights, active states)
+- **Light Yellow:** #FFE082 (hover states, subtle highlights)
+- **Text on Dark:** #FFFFFF (primary text on dark backgrounds)
+- **Text on Light:** #3E2723 (text on light backgrounds)
+- **Success Green:** #66BB6A (completed tasks)
+- **Error Red:** #EF5350 (delete actions, errors)
 
-[PRINCIPLE__DESCRIPTION]
+### API Integration Contract
+All frontend-backend communication must follow the specified API contract with proper authentication headers and error handling.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### Component Architecture
+Must follow the specified component hierarchy with AuthProvider, Layout, TaskForm, TaskList, TaskCard, and modal components.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Code Quality Standards
+- TypeScript strict mode (no `any` types)
+- All components have proper types
+- Error handling in all API calls
+- Loading states for all async operations
+- Consistent code formatting (Prettier)
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Development Workflow
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+All development follows the Spec-First approach where specifications in the /specs folder must be updated before any code changes are made. Implementation must follow the Phase II requirements including all core features and testing checklist items.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution serves as the Supreme Law governing all development practices in the project. The two Supreme Laws (Rule of Separation and Rule of Isolation) take precedence over all other principles and must be followed under all circumstances. All team members must adhere to these principles. Any changes to these principles require explicit approval from the project lead.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.3.0 | **Ratified**: 2026-01-13 | **Last Amended**: 2026-01-27

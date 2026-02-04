@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 44, 24, 16; /* Brown darkest #2C1810 */
+  --background-end-rgb: 62, 39, 35; /* Brown dark #3E2723 */
+
+  /* Brown colors - Dark to Light */
+  --brown-darkest: #2C1810;   /* Background dark */
+  --brown-dark: #3E2723;      /* Main background */
+  --brown-medium: #5D4037;    /* Header, cards dark */
+  --brown-light: #8D6E63;     /* Task cards */
+  --brown-lighter: #BCAAA4;   /* Borders, text */
+
+  /* Yellow/Gold colors */
+  --gold-medium: #FFC107;     /* Buttons, accents */
+  --gold-light: #FFD54F;      /* Button hover */
+  --gold-glow: #FFE082;       /* Glow effects */
+
+  /* Semantic */
+  --success: #66BB6A;         /* Complete button */
+  --error: #EF5350;           /* Delete button */
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Elegant Container Styles */
+.elegant-container {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+/* Input Field Styles */
+.input-elegant {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: white;
+  border: 2px solid #B8A180;
+  border-radius: 0.75rem;
+  color: #3E2723;
+  font-size: 1rem;
+}
+
+.input-elegant:focus {
+  outline: none;
+  border-color: #CCA352;
+  box-shadow: 0 0 0 4px rgba(204, 163, 82, 0.125);
+  transition: all 0.3s ease;
+}
+
+/* Gold Button Styles */
+.gold-button {
+  background: linear-gradient(to right, #CCA352, #E6C07E);
+  color: white;
+  font-weight: bold;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.gold-button:hover {
+  background: linear-gradient(to right, #E6C07E, #F0D195);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Additional Brown/Yellow Button Variants */
+.brown-button {
+  background: linear-gradient(to right, #8D6E63, #A1887F);
+  color: white;
+  font-weight: bold;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.brown-button:hover {
+  background: linear-gradient(to right, #A1887F, #BCAAA4);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.yellow-button {
+  background: linear-gradient(to right, #FFC107, #FFD54F);
+  color: #3E2723;
+  font-weight: bold;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.yellow-button:hover {
+  background: linear-gradient(to right, #FFD54F, #FFEB3B);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Minimalist Outline Button */
+.outline-button {
+  border: 2px solid #CCA352;
+  color: #CCA352;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.outline-button:hover {
+  background-color: #CCA352;
+  color: white;
+}
+
+/* Task Strip Styles */
+.task-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 0.75rem;
+  border: 1px solid #DCC6A3;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.task-strip:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: scale(1.02);
+}
+
+/* Additional Brown/Yellow Task Strip Variants */
+.task-strip-completed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #F5F5F5;
+  border-radius: 0.75rem;
+  border: 1px solid #DCC6A3;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  opacity: 0.8;
+}
+
+.task-strip-completed:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+  transform: scale(1.02);
+}
+
+/* Serif Font Class */
+.serif-font {
+  font-family: 'Georgia', 'Times New Roman', Times, serif;
+}
+
+/* Additional Color Utility Classes */
+.bg-brown-creme { background-color: #D7CCC8; }
+.bg-gold-creme { background-color: #FFF9C4; }
+.bg-amber-warm { background-color: #FFC107; }
+.text-amber-warm { color: #FFC107; }
+.border-amber-warm { border-color: #FFC107; }
+.text-gold-soft { color: #FFEB3B; }
+.bg-beige-soft { background-color: #EFEBE0; }
+.text-brown-light { color: #A1887F; }
+.bg-brown-lighter { background-color: #BCAAA4; }
