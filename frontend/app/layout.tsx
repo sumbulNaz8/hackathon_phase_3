@@ -2,7 +2,7 @@
 
 'use client';
 
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '@/context/AuthContext'; // Ensure correct case for Linux/Vercel
 import { Toaster } from 'react-hot-toast';
 import '@/app/globals.css';
 

@@ -1,0 +1,10 @@
+{
+  "framework": "nextjs",
+  "root": ".",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "github": {
+    "enabled": true
+  }
+}
