@@ -12,6 +12,17 @@ interface TaskListProps {
 }
 
 export const TaskList = ({ tasks, onToggle, onEdit, onDelete }: TaskListProps) => {
+  // Check if tasks is undefined or null
+  if (!tasks || !Array.isArray(tasks)) {
+    console.error('TaskList received invalid tasks:', tasks);
+    return (
+      <div className="bg-[#8D6E63] rounded-xl p-8 text-center">
+        <p className="text-white">Error loading tasks</p>
+      </div>
+    );
+  }
+
+  // Empty state
   if (tasks.length === 0) {
     return (
       <div className="bg-[#8D6E63] rounded-xl p-12 text-center shadow-md">

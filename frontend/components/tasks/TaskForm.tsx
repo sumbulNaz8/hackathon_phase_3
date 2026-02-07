@@ -1,13 +1,14 @@
 // components/tasks/TaskForm.tsx
 
 import { useState } from 'react';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
 
 interface TaskFormProps {
-  onSubmit: (title: string, description: string) => Promise<void>;
+  onSubmit: (title: string, description: string, priority: string, category: string, dueDate: string) => Promise<void>;
   initialTitle?: string;
   initialDescription?: string;
+  initialPriority?: string;
+  initialCategory?: string;
+  initialDueDate?: string;
   submitLabel?: string;
   onCancel?: () => void;
 }
@@ -16,11 +17,17 @@ export const TaskForm = ({
   onSubmit,
   initialTitle = '',
   initialDescription = '',
+  initialPriority = 'medium',
+  initialCategory = '',
+  initialDueDate = '',
   submitLabel = 'Create Task',
   onCancel
 }: TaskFormProps) => {
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
+  const [priority, setPriority] = useState(initialPriority);
+  const [category, setCategory] = useState(initialCategory);
+  const [dueDate, setDueDate] = useState(initialDueDate);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -36,9 +43,12 @@ export const TaskForm = ({
     setError('');
 
     try {
-      await onSubmit(title, description);
+      await onSubmit(title, description, priority, category, dueDate);
       setTitle('');
       setDescription('');
+      setPriority('medium');
+      setCategory('');
+      setDueDate('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -47,47 +57,89 @@ export const TaskForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <Input
-        label="Task Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Enter task title"
-        required
-        error={error && !title ? error : ''}
-      />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label className="block text-cream font-semibold mb-3 text-xl">Task Title</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Enter task title"
+          required
+          className="w-full px-6 py-5 rounded-2xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none text-lg elegant-input"
+        />
+      </div>
 
       <div className="w-full">
-        <label className="block text-sm font-medium text-[#BCAAA4] mb-2">Description</label>
+        <label className="block text-cream font-semibold mb-3 text-xl">Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Enter task description (optional)"
-          rows={3}
-          className="w-full px-4 py-3 bg-white border-2 border-[#BCAAA4] rounded-lg text-[#3E2723] placeholder-[#BCAAA4] focus:outline-none focus:ring-0 focus:border-[#FFC107]"
+          rows={4}
+          className="w-full px-6 py-5 rounded-2xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none resize-none elegant-input"
         />
       </div>
 
-      <div className="flex space-x-3 pt-2">
-        <Button
+      <div className="grid grid-cols-2 gap-6">
+        <div>
+          <label className="block text-cream font-semibold mb-3 text-xl">Priority</label>
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="w-full px-6 py-5 rounded-2xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none elegant-input"
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-cream font-semibold mb-3 text-xl">Category</label>
+          <input
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            placeholder="Enter category (optional)"
+            className="w-full px-6 py-5 rounded-2xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none elegant-input"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-cream font-semibold mb-3 text-xl">Due Date</label>
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="w-full px-6 py-5 rounded-2xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none elegant-input"
+        />
+      </div>
+
+      {error && (
+        <div className="text-error text-base font-medium py-2">
+          {error}
+        </div>
+      )}
+
+      <div className="flex space-x-4 pt-3">
+        <button
           type="submit"
-          variant="primary"
-          size="md"
-          isLoading={isLoading}
-          className="flex-1"
+          disabled={isLoading}
+          className="flex-1 py-5 text-xl font-bold text-brown-dark rounded-2xl btn-premium disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
         >
-          {submitLabel}
-        </Button>
+          <span className="relative z-10">{isLoading ? 'Saving...' : submitLabel}</span>
+        </button>
 
         {onCancel && (
-          <Button
+          <button
             type="button"
-            variant="secondary"
-            size="md"
             onClick={onCancel}
+            className="py-5 px-8 text-xl font-bold text-cream bg-gradient-to-r from-brown-medium to-brown-light rounded-2xl hover:from-brown-light hover:to-brown-lighter transition-all duration-300 shadow-elegant hover:shadow-elegant-lg"
           >
             Cancel
-          </Button>
+          </button>
         )}
       </div>
     </form>

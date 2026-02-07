@@ -1,123 +1,117 @@
-// app/login/page.tsx
+'use client'
 
-'use client';
-
-import { useState } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/context/AuthContext';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { useAuth } from '@/context/AuthContext'
+import { CheckSquare } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { login, isAuthenticated } = useAuth()
+  const router = useRouter()
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard')
+    }
+  }, [isAuthenticated, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
+    e.preventDefault()
+    setLoading(true)
+
     try {
-      await login(email, password);
-      toast.success('Login successful!');
-      // Redirect handled by AuthContext
+      await login(email, password)
+      toast.success('Welcome back!')
+      router.push('/dashboard')
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Login failed');
+      toast.error('Invalid credentials')
     } finally {
-      setIsLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  // Don't render anything if redirecting
+  if (isAuthenticated) {
+    return null
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#2C1810] to-[#3E2723] p-4">
-      <motion.div
-        className="w-full max-w-md bg-[#5D4037] shadow-2xl rounded-3xl p-8 text-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <motion.div
-          className="flex justify-center mb-6"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-        >
-          <div className="p-4 rounded-2xl bg-[#3E2723]">
-            <Lock className="w-12 h-12 text-[#FFC107]" />
+    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gold-medium opacity-5 rounded-full blur-3xl floating-element"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gold-light opacity-5 rounded-full blur-3xl floating-element-2"></div>
+      </div>
+
+      {/* Main Container */}
+      <div className="w-full max-w-md mx-auto">
+        {/* Login Card */}
+        <div className="relative z-10 elegant-card rounded-3xl p-8 md:p-10 w-full max-w-md mx-auto shadow-elegant-lg animate-scale-in backdrop-blur-sm">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <div className="relative inline-block mb-4">
+              <CheckSquare className="w-20 h-20 text-gold-medium mx-auto animate-glow-pulse" />
+              <div className="absolute inset-0 bg-gold-medium opacity-20 blur-2xl"></div>
+            </div>
+            <h1 className="text-4xl font-bold text-gradient mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-cream text-lg text-subtle">Login to manage your tasks</p>
           </div>
-        </motion.div>
 
-        <motion.h1
-          className="text-3xl font-bold text-[#FFC107] mb-2"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          Welcome Back
-        </motion.h1>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Input */}
+            <div>
+              <label className="block text-cream font-semibold mb-2 text-lg">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                className="w-full px-4 py-4 rounded-xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none text-base elegant-input"
+              />
+            </div>
 
-        <motion.p
-          className="text-[#BCAAA4] mb-8"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          Sign in to your account
-        </motion.p>
+            {/* Password Input */}
+            <div>
+              <label className="block text-cream font-semibold mb-2 text-lg">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className="w-full px-4 py-4 rounded-xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none text-base elegant-input"
+              />
+            </div>
 
-        <motion.form
-          onSubmit={handleSubmit}
-          className="space-y-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <Input
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-          
-          <Input
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            required
-          />
-          
-          <Button 
-            type="submit" 
-            variant="primary" 
-            size="lg" 
-            isLoading={isLoading}
-            className="w-full flex items-center justify-center gap-2"
-          >
-            Login
-            <ArrowRight size={18} />
-          </Button>
-        </motion.form>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 text-lg font-bold text-brown-dark rounded-xl btn-premium disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+            >
+              <span className="relative z-10">{loading ? 'Logging in...' : 'Login'}</span>
+            </button>
+          </form>
 
-        <motion.p
-          className="mt-6 text-[#BCAAA4] text-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-        >
-          Don't have an account?{' '}
-          <Link href="/signup" className="text-[#FFC107] hover:underline">
-            Sign up
-          </Link>
-        </motion.p>
-      </motion.div>
+          {/* Signup Link */}
+          <p className="text-center mt-8 text-cream text-base text-subtle">
+            Don't have an account?{' '}
+            <Link href="/signup" className="text-gold-light hover:text-gold-medium font-bold transition-colors underline">
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
-  );
+  )
 }

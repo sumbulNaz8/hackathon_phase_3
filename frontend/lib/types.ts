@@ -1,19 +1,23 @@
 // lib/types.ts
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  createdAt: Date;
+  createdAt?: Date;
 }
 
 export interface Task {
   id: number;
+  user_id: string;
   title: string;
   description?: string;
   completed: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: string;
+  updated_at: string;
+  priority?: 'low' | 'medium' | 'high';
+  category?: string;
+  due_date?: string;
 }
 
 export interface ApiResponse<T> {
@@ -21,4 +25,10 @@ export interface ApiResponse<T> {
   data?: T;
   message?: string;
   error?: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  user: User;
 }
