@@ -1,5 +1,8 @@
+"use client";
+
 import "./globals.css";
-import { ToastProvider } from "../context/toast-context"; // Relative path is safer
+import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/context/toast-context";
 
 export default function RootLayout({
   children,
@@ -9,9 +12,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ToastProvider>
-          {children}
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   );
