@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, Square, CheckSquare, Trash2, Menu, X, Tag, Sun, Moon, Coffee, Award, TrendingUp } from 'lucide-react';
-import { useToast } from './context/toast-context';
+import { useToast } from '@/context/toast-context';
 
 // Define TypeScript interfaces
 interface Task {
