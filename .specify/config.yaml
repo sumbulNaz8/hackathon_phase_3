@@ -1,0 +1,67 @@
+# Spec Kit Configuration
+# Maps the directory structure for the specification-driven development workflow
+
+specification:
+  # Directory path for feature specifications
+  specs_dir: "../specs"
+  
+  # Template paths for different specification types
+  templates:
+    spec_template: "./templates/spec-template.md"
+    plan_template: "./templates/plan-template.md"
+    tasks_template: "./templates/tasks-template.md"
+    adr_template: "./templates/adr-template.md"
+
+agentic_structure:
+  # Directory paths for the agentic architecture
+  skills_dir: "../skills"
+  subagents_dir: "../subagents"
+  
+  # Skill configuration
+  skills:
+    # Patterns for skill files
+    file_patterns:
+      - "**/*.py"    # Python skills
+      - "**/*.js"    # JavaScript skills
+      - "**/*.ts"    # TypeScript skills
+    
+    # Directory exclusions
+    exclude_dirs:
+      - "__pycache__"
+      - "node_modules"
+      - ".git"
+
+architecture_constraints:
+  # Phase II architecture rules
+  backend_framework: "FastAPI"
+  frontend_framework: "Next.js 16+"
+  database: "SQLModel with Neon DB"
+  authentication: "Better Auth"
+  
+  # Enforcement rules
+  business_logic_location: "/skills folder only"
+  user_isolation_required: true
+  api_route_restrictions: true
+
+development_workflow:
+  # Process enforcement
+  spec_first: true
+  constitution_governance: true
+  
+  # Directory mappings for workflow
+  workflow_dirs:
+    specs: "../specs"
+    skills: "../skills"
+    subagents: "../subagents"
+    history: "../history"
+    adrs: "../history/adr"
+
+validation:
+  # Rules for validating compliance with Phase II architecture
+  enabled: true
+  checks:
+    - "business_logic_in_skills_only"
+    - "user_id_check_in_queries"
+    - "tech_stack_compliance"
+    - "auth_enforcement"
+    - "spec_first_principle"

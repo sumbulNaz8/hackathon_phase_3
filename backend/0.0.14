@@ -1,0 +1,7 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: sqlmodel in c:\users\ag computer\appdata\roaming\python\python314\site-packages (0.0.8)
+Requirement already satisfied: SQLAlchemy<=1.4.41,>=1.4.17 in c:\users\ag computer\appdata\roaming\python\python314\site-packages (from sqlmodel) (1.4.41)
+Requirement already satisfied: pydantic<2.0.0,>=1.8.2 in c:\users\ag computer\appdata\roaming\python\python314\site-packages (from sqlmodel) (1.10.26)
+Requirement already satisfied: sqlalchemy2-stubs in c:\users\ag computer\appdata\roaming\python\python314\site-packages (from sqlmodel) (0.0.2a38)
+Requirement already satisfied: typing-extensions>=4.2.0 in c:\users\ag computer\appdata\roaming\python\python314\site-packages (from pydantic<2.0.0,>=1.8.2->sqlmodel) (4.15.0)
+Requirement already satisfied: greenlet!=0.4.17 in c:\users\ag computer\appdata\roaming\python\python314\site-packages (from SQLAlchemy<=1.4.41,>=1.4.17->sqlmodel) (3.3.0)
