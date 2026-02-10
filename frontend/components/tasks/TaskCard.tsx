@@ -79,7 +79,7 @@ export const TaskCard = ({ task, onToggle, onEdit, onDelete }: TaskCardProps) =>
                 </h3>
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${getPriorityColor(task.priority || 'medium')} shadow-elegant`}>
                   {getPriorityIcon(task.priority || 'medium')}
-                  {task.priority?.charAt(0).toUpperCase() + task.priority?.slice(1)}
+                  {(task.priority || 'medium').charAt(0).toUpperCase() + (task.priority || 'medium').slice(1)}
                 </span>
                 {isOverdue && (
                   <AlertTriangle className="text-error" size={18} />
