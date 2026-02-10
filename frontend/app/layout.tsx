@@ -2,8 +2,8 @@
 
 'use client';
 
-import { AuthProvider } from '@/context/AuthContext'; // Ensure correct case for Linux/Vercel
-import { ToastProvider } from '@/app/context/toast-context';
+import { AuthProvider } from '@/context/AuthContext';
+import { ToastProvider } from '@/context/toast-context';
 import '@/app/globals.css';
 
 export default function RootLayout({
