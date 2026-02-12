@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "projects": {
+    "frontend": {
+      "root": "frontend",
+      "name": "hackathon-2-frontend",
+      "framework": "nextjs"
+    },
+    "backend": {
+      "root": "backend",
+      "name": "hackathon-2-backend",
+      "framework": "python"
+    }
+  }
+}

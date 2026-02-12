@@ -1,146 +1,223 @@
-# Deployment Guide for Hackathon_2 Monorepo
+# 🚀 Vercel Deployment Guide - No 404 Errors!
 
-## Project Structure
-```
-hackathon_2/
-├── frontend/          # Next.js application
-│   ├── app/          # Next.js App Router
-│   ├── components/   # React components
-│   ├── package.json
-│   └── vercel.json
-├── backend/          # FastAPI application
-│   ├── main.py       # FastAPI server
-│   ├── requirements.txt
-│   └── auth_env/     # Python virtual environment
-├── vercel.json       # Vercel configuration (ROOT)
-├── .gitignore
-└── README.md
+## 📋 Prerequisites
+- Vercel account (free)
+- GitHub repository with this code
+- Both frontend & backend ready to deploy
 
-```
+---
 
-## Windows Terminal Commands
+## 🔧 Step 1: Deploy Backend FIRST
 
-### 1. Navigate to Project
-```powershell
-cd "C:\Users\AG Computer\Desktop\hackathon_2"
-```
-
-### 2. Check Git Status
-```powershell
-git status
-```
-
-### 3. Add New vercel.json
-```powershell
-git add vercel.json
-```
-
-### 4. Commit Changes
-```powershell
-git commit -m "Add vercel.json for proper frontend routing"
-```
-
-### 5. Force Push to GitHub (Bypass "Everything up-to-date")
-```powershell
-# Option A: If you want to keep history
-git push origin main --force-with-lease
-
-# Option B: If you want to completely reset (WARNING: loses commit history)
-git push origin main --force
-```
-
-### 6. Verify Push
-```powershell
-git status
-```
-
-Should show: "Your branch is up-to-date with 'origin/main'."
-
-## Vercel Deployment
-
-### Automatic Deployment
-1. Push to GitHub
-2. Vercel will auto-deploy
-3. Visit your Vercel dashboard
-
-### Manual Deployment
-```powershell
-npx vercel --prod
-```
-
-## Environment Variables
-
-### Frontend (.env.local)
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
-
-### Backend (.env)
-```env
-DATABASE_URL=your_database_url
-SECRET_KEY=your_secret_key
-```
-
-## Troubleshooting
-
-### "Everything up-to-date" Issue
-```powershell
-# Create a dummy commit
-git commit --allow-empty -m "Trigger deployment"
-
-# Or touch a file and commit
-echo " " >> .gitkeep
-git add .gitkeep
-git commit -m "Trigger deployment"
-git push origin main
-```
-
-### 404 Errors on Vercel
-1. Ensure vercel.json is in ROOT directory
-2. Check that frontend/ folder exists
-3. Verify Next.js is in frontend/
-4. Redeploy on Vercel
-
-### Build Failures
-```powershell
-# Clean install frontend
-cd frontend
-rmdir /s /q node_modules
-del package-lock.json
-npm install
-npm run build
-```
-
-## Backend Deployment
-
-### Option 1: Render/Railway/Fly.io
-1. Connect GitHub repo
-2. Set root directory to `backend/`
-3. Set build command: `pip install -r requirements.txt`
-4. Set start command: `uvicorn main:app --host 0.0.0.0 --port 8000`
-
-### Option 2: Vercel Serverless
-Create `api/users/[id]/route.ts` in frontend/ to proxy requests
-
-## Quick Deploy Script (Windows)
-
-Save as `deploy.bat`:
-```batch
-@echo off
-cd /d "C:\Users\AG Computer\Desktop\hackathon_2"
-echo Adding files...
+### 1.1 Push code to GitHub
+```bash
 git add .
-echo Committing...
-git commit -m "Deploy changes"
-echo Pushing to GitHub...
-git push origin main
-echo Done! Check Vercel for deployment status.
-pause
+git commit -m "Fix Vercel deployment configuration"
+git push
 ```
 
-## Support
+### 1.2 Deploy Backend on Vercel
+1. Go to [vercel.com](https://vercel.com)
+2. Click **"Add New Project"**
+3. Import your GitHub repository
+4. **IMPORTANT**: Click **"Edit Configuration"**
+5. Set these settings:
+   - **Root Directory**: `backend`
+   - **Framework Preset**: Python
+   - **Build Command**: (leave empty)
+   - **Output Directory**: (leave empty)
+6. Click **"Deploy"**
 
-- Frontend Issues: Check frontend/vercel.json
-- Backend Issues: Check backend/main.py
-- Vercel Issues: Check root vercel.json
-- GitHub Issues: Check .gitignore
+### 1.3 Get Backend URL
+After deployment completes, Vercel will give you a URL like:
+```
+https://hackathon-2-backend.vercel.app
+```
+
+**📝 Copy this URL!** You'll need it for the frontend.
+
+---
+
+## 🎨 Step 2: Deploy Frontend
+
+### 2.1 Update Frontend Environment Variable
+
+**Option A: Via Vercel Dashboard** (Recommended)
+1. Go to your frontend project on Vercel
+2. Go to **Settings → Environment Variables**
+3. Add variable:
+   - **Key**: `NEXT_PUBLIC_API_URL`
+   - **Value**: `https://hackathon-2-backend.vercel.app`
+   - **Environments**: Production, Preview, Development
+4. Click **"Save"**
+5. **Redeploy** the frontend
+
+**Option B: Update vercel.json**
+Edit `frontend/vercel.json` and replace the backend URL:
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "YOUR_BACKEND_URL_HERE"
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "YOUR_BACKEND_URL_HERE/api/:path*"
+    }
+  ]
+}
+```
+
+### 2.2 Deploy Frontend on Vercel
+1. Click **"Add New Project"** on Vercel
+2. Import the same GitHub repository
+3. Set these settings:
+   - **Root Directory**: `frontend`
+   - **Framework Preset**: Next.js
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `.next`
+4. Click **"Deploy"**
+
+---
+
+## ✅ Step 3: Verify No 404 Errors
+
+### 3.1 Check Backend Health
+Visit: `https://hackathon-2-backend.vercel.app/health`
+
+Expected response:
+```json
+{
+  "status": "healthy",
+  "timestamp": "...",
+  "users": 0,
+  "tasks": 0
+}
+```
+
+### 3.2 Check Frontend Homepage
+Visit: `https://hackathon-2-frontend.vercel.app`
+
+Expected: **Todo App** page with Login/Signup buttons
+
+### 3.3 Test Authentication
+1. Click **"Sign Up"**
+2. Create an account
+3. Verify you're redirected to dashboard
+
+### 3.4 Test API Endpoints
+```bash
+# Test health endpoint
+curl https://hackathon-2-backend.vercel.app/health
+
+# Test signup endpoint
+curl -X POST https://hackathon-2-backend.vercel.app/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test","email":"test@example.com","password":"test123"}'
+```
+
+---
+
+## 🐛 Common 404 Issues & Solutions
+
+### Issue 1: Backend returns 404
+**Cause**: Wrong file structure
+**Solution**:
+- Make sure `backend/api/index.py` exists
+- Verify `backend/vercel.json` points to `api/index.py`
+
+### Issue 2: Frontend can't reach backend
+**Cause**: Wrong API URL
+**Solution**:
+- Check `NEXT_PUBLIC_API_URL` in Vercel settings
+- Hard refresh frontend (Cmd/Ctrl + Shift + R)
+
+### Issue 3: "Cannot GET /api/..."
+**Cause**: Vercel routes not configured
+**Solution**:
+- Verify `backend/vercel.json` has correct `routes` section
+- Redeploy backend
+
+### Issue 4: Database errors on Vercel
+**Cause**: File-based storage doesn't work on serverless
+**Solution**:
+- For demo/hackathon: **This is expected behavior**
+- Data will reset on each deployment
+- For production: Add Vercel Postgres or similar
+
+---
+
+## 📊 Architecture After Deployment
+
+```
+User Browser
+    ↓
+Frontend (Vercel Next.js)
+    ↓
+Backend API (Vercel Python/FastAPI)
+    ↓
+JSON Files (ephemeral, resets on deployment)
+```
+
+---
+
+## 🔐 Important Notes
+
+### ⚠️ Data Persistence
+**This project uses JSON file storage** which will **NOT persist** on Vercel:
+- Each deployment = fresh data
+- Serverless functions = ephemeral filesystem
+- For hackathon/demo: OK
+- For production: Use Vercel Postgres or similar
+
+### 🚀 For Production
+Replace JSON storage with:
+- Vercel Postgres (recommended)
+- Supabase
+- PlanetScale
+- Or any cloud database
+
+---
+
+## 🎯 Quick Test Commands
+
+```bash
+# Test backend
+curl https://hackathon-2-backend.vercel.app/health
+
+# Test frontend
+curl -I https://hackathon-2-frontend.vercel.app
+
+# Test API (after signing up)
+curl https://hackathon-2-backend.vercel.app/api/auth/me \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+---
+
+## ✨ Success Checklist
+
+- [ ] Backend deployed and `/health` returns 200
+- [ ] Frontend deployed and homepage loads
+- [ ] Signup works
+- [ ] Login works
+- [ ] Dashboard loads without 404
+- [ ] Create task works
+- [ ] All API endpoints respond
+
+**When all checked = Successfully deployed! 🎉**
+
+---
+
+## 📞 Need Help?
+
+If you get 404 errors:
+1. Check Vercel deployment logs
+2. Verify file structure (especially `backend/api/index.py`)
+3. Confirm `NEXT_PUBLIC_API_URL` is set
+4. Try redeploying both frontend and backend
+
+Good luck! 🚀

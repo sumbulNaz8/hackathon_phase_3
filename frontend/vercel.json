@@ -1,5 +1,14 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
-  "installCommand": "npm install"
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://hackathon-2-backend.vercel.app"
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://hackathon-2-backend.vercel.app/api/:path*"
+    }
+  ]
 }
