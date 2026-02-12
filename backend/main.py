@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timedelta
+from pathlib import Path
+import json
 import jwt
 import bcrypt
 
@@ -28,11 +30,37 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 7
 
 # ═══════════════════════════════════════════
-# IN-MEMORY DATABASE
+# PERSISTENT JSON DATABASE
 # ═══════════════════════════════════════════
-users_db = {}
-tasks_db = {}
-task_counter = 0
+DATA_DIR = Path("data")
+DATA_DIR.mkdir(exist_ok=True)
+USERS_FILE = DATA_DIR / "users.json"
+TASKS_FILE = DATA_DIR / "tasks.json"
+COUNTER_FILE = DATA_DIR / "counter.json"
+
+def load_json_file(filepath: Path, default=None):
+    """Load data from JSON file"""
+    if filepath.exists():
+        try:
+            with open(filepath, 'r') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Warning: Could not load {filepath}: {e}")
+    return default if default is not None else {}
+
+def save_json_file(filepath: Path, data):
+    """Save data to JSON file"""
+    with open(filepath, 'w') as f:
+        json.dump(data, f, indent=2, default=str)
+
+# Initialize databases from files or create empty
+users_db = load_json_file(USERS_FILE, {})
+tasks_db = load_json_file(TASKS_FILE, {})
+task_counter = load_json_file(COUNTER_FILE, {}).get("task_counter", 0)
+
+def save_task_counter():
+    """Save task counter to file"""
+    save_json_file(COUNTER_FILE, {"task_counter": task_counter})
 
 # ═══════════════════════════════════════════
 # PYDANTIC MODELS
@@ -92,6 +120,19 @@ def create_access_token(data: dict) -> str:
     return encoded_jwt
 
 # ═══════════════════════════════════════════
+# STARTUP EVENT
+# ═══════════════════════════════════════════
+@app.on_event("startup")
+async def startup_event():
+    print("=" * 50)
+    print("🚀 Phase II Todo API Starting...")
+    print(f"📁 Data directory: {DATA_DIR.absolute()}")
+    print(f"👥 Loaded {len(users_db)} users from storage")
+    print(f"📋 Loaded {len(tasks_db)} tasks from storage")
+    print(f"🔢 Task counter: {task_counter}")
+    print("=" * 50)
+
+# ═══════════════════════════════════════════
 # ROOT ENDPOINTS
 # ═══════════════════════════════════════════
 @app.get("/")
@@ -109,7 +150,10 @@ async def health_check():
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
         "users": len(users_db),
-        "tasks": len(tasks_db)
+        "tasks": len(tasks_db),
+        "task_counter": task_counter,
+        "storage": "persistent_json_files",
+        "data_directory": str(DATA_DIR.absolute())
     }
 
 # ═══════════════════════════════════════════
@@ -118,18 +162,18 @@ async def health_check():
 @app.post("/api/auth/signup")
 async def signup(user: UserSignup):
     """Register a new user"""
-    
+
     # Validate input
     if not user.name or not user.email or not user.password:
         raise HTTPException(status_code=400, detail="All fields are required")
-    
+
     if len(user.password) < 8:
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
-    
+
     # Check if email already exists
     if user.email in users_db:
         raise HTTPException(status_code=409, detail="Email already registered")
-    
+
     # Create new user
     user_id = f"user_{len(users_db) + 1}"
     users_db[user.email] = {
@@ -139,13 +183,16 @@ async def signup(user: UserSignup):
         "password_hash": hash_password(user.password),
         "created_at": datetime.utcnow().isoformat()
     }
-    
+
+    # Save to persistent storage
+    save_json_file(USERS_FILE, users_db)
+
     # Generate JWT token
     access_token = create_access_token({
         "user_id": user_id,
         "email": user.email
     })
-    
+
     # Return response
     return {
         "access_token": access_token,
@@ -195,34 +242,45 @@ async def login(credentials: UserLogin):
 @app.get("/api/auth/me")
 async def get_current_user(authorization: Optional[str] = Header(None)):
     """Get current authenticated user"""
+    print(f"🔵 /api/auth/me called - Authorization: {authorization[:50] if authorization else 'None'}...")
+
     # Extract token from Authorization header
     if not authorization:
-        raise HTTPException(status_code=401, detail="Authorization header required")
+        print("🔴 No Authorization header provided")
+        raise HTTPException(status_code=401, detail="Authorization header required. Please login again.")
 
     if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid authorization format")
+        print("🔴 Invalid Authorization format")
+        raise HTTPException(status_code=401, detail="Invalid authorization format. Please login again.")
 
     token = authorization.split(" ")[1]
+    print(f"🔵 Token extracted: {token[:20]}...")
 
     # Decode and validate token
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("email")
+        print(f"🔵 Decoded email: {email}")
 
         # Find user by email
         user = users_db.get(email)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            print(f"🔴 User not found for email: {email}")
+            print(f"🔴 Available users: {list(users_db.keys())}")
+            raise HTTPException(status_code=404, detail=f"User account not found. Please sign up again.")
 
+        print(f"✅ User found: {user['email']}")
         return {
             "id": user["id"],
             "email": user["email"],
             "name": user["name"]
         }
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    except jwt.ExpiredSignatureError as e:
+        print(f"🔴 Token expired: {e}")
+        raise HTTPException(status_code=401, detail="Your session has expired. Please login again.")
+    except jwt.InvalidTokenError as e:
+        print(f"🔴 Invalid token: {e}")
+        raise HTTPException(status_code=401, detail="Invalid authentication token. Please login again.")
 
 # ═══════════════════════════════════════════
 # TASK ENDPOINTS
@@ -258,13 +316,13 @@ async def get_tasks(user_id: str,
 async def create_task(user_id: str, task: TaskCreate):
     """Create a new task"""
     global task_counter
-    
+
     # Validate input
     if not task.title or not task.title.strip():
         raise HTTPException(status_code=400, detail="Title is required")
-    
+
     task_counter += 1
-    
+
     new_task = {
         "id": task_counter,
         "user_id": user_id,
@@ -281,8 +339,13 @@ async def create_task(user_id: str, task: TaskCreate):
         "created_at": datetime.utcnow().isoformat(),
         "updated_at": datetime.utcnow().isoformat()
     }
-    
+
     tasks_db[task_counter] = new_task
+
+    # Save to persistent storage
+    save_json_file(TASKS_FILE, tasks_db)
+    save_task_counter()
+
     return new_task
 
 @app.get("/api/{user_id}/tasks/{task_id}")
@@ -371,45 +434,57 @@ async def update_task(user_id: str, task_id: int, task: TaskUpdate):
         })
 
     tasks_db[task_id] = existing_task
+
+    # Save to persistent storage
+    save_json_file(TASKS_FILE, tasks_db)
+
     return existing_task
 
 @app.delete("/api/{user_id}/tasks/{task_id}")
 async def delete_task(user_id: str, task_id: int):
     """Delete a task"""
-    
+
     # Check if task exists
     if task_id not in tasks_db:
         raise HTTPException(status_code=404, detail="Task not found")
-    
+
     task = tasks_db[task_id]
-    
+
     # Check authorization
     if task["user_id"] != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this task")
-    
+
     # Delete task
     del tasks_db[task_id]
+
+    # Save to persistent storage
+    save_json_file(TASKS_FILE, tasks_db)
+
     return {"message": "Task deleted successfully"}
 
 @app.patch("/api/{user_id}/tasks/{task_id}/complete")
 async def toggle_task_completion(user_id: str, task_id: int):
     """Toggle task completion status"""
-    
+
     # Check if task exists
     if task_id not in tasks_db:
         raise HTTPException(status_code=404, detail="Task not found")
-    
+
     task = tasks_db[task_id]
-    
+
     # Check authorization
     if task["user_id"] != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to modify this task")
-    
+
     # Toggle completion
     task["completed"] = not task["completed"]
     task["updated_at"] = datetime.utcnow().isoformat()
-    
+
     tasks_db[task_id] = task
+
+    # Save to persistent storage
+    save_json_file(TASKS_FILE, tasks_db)
+
     return task
 
 @app.post("/api/{user_id}/tasks/sort")

@@ -1,7 +1,8 @@
 // components/layout/Header.tsx
 
 import { User } from '@/lib/types';
-import { LogOut, CheckSquare } from 'lucide-react';
+import { LogOut, CheckSquare, Clock } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 interface HeaderProps {
   user: User | null;
@@ -9,6 +10,11 @@ interface HeaderProps {
 }
 
 export const Header = ({ user, onLogout }: HeaderProps) => {
+  const { tokenExpiry } = useAuth();
+
+  // Calculate if token is expiring soon (less than 24 hours)
+  const isTokenExpiringSoon = tokenExpiry && (tokenExpiry.getTime() - Date.now()) < (24 * 60 * 60 * 1000);
+
   return (
     <header className="sticky top-0 z-50 bg-slate-900/50 backdrop-blur-xl border-b border-slate-700/50 py-4 px-6 shadow-lg">
       <div className="container mx-auto max-w-6xl flex justify-between items-center">
@@ -16,7 +22,15 @@ export const Header = ({ user, onLogout }: HeaderProps) => {
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-glow-primary">
             <CheckSquare className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gradient-primary">Todo App</h1>
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-bold text-gradient-primary">Todo App</h1>
+            {isTokenExpiringSoon && (
+              <div className="flex items-center space-x-1 text-amber-400 text-sm mt-1">
+                <Clock size={14} />
+                <span>Session expiring soon</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {user && (

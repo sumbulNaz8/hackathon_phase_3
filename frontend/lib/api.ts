@@ -5,8 +5,13 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 console.log('🔵 API Base URL:', API_BASE_URL);
 
 const handleResponse = async (response: Response) => {
+  console.log('🔵 API Response:', response.status, response.url);
+
   if (response.status === 401) {
+    console.error('🔴 401 Unauthorized - removing token and redirecting');
     if (typeof window !== 'undefined') {
+      const currentToken = localStorage.getItem('token');
+      console.error('🔴 Token that was removed:', currentToken?.substring(0, 20) + '...');
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
