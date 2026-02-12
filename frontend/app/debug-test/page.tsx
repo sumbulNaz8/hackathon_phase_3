@@ -13,7 +13,6 @@ export default function DebugTestPage() {
   const testConnection = async () => {
     addLog('🔵 Starting connection test...')
 
-    // Test 1: Health Check
     try {
       addLog('🔵 Test 1: Checking backend health...')
       const response = await fetch('http://localhost:8000/health')
@@ -24,7 +23,6 @@ export default function DebugTestPage() {
       return
     }
 
-    // Test 2: Signup
     try {
       addLog('🔵 Test 2: Creating test user...')
       const signupResponse = await fetch('http://localhost:8000/api/auth/signup', {
@@ -48,7 +46,6 @@ export default function DebugTestPage() {
       return
     }
 
-    // Test 3: Login
     try {
       addLog('🔵 Test 3: Testing login...')
       const loginResponse = await fetch('http://localhost:8000/api/auth/login', {
@@ -65,7 +62,6 @@ export default function DebugTestPage() {
         addLog(`   User: ${loginData.user.name}`)
         const token = loginData.access_token
 
-        // Test 4: Get Current User
         addLog('🔵 Test 4: Getting current user...')
         const meResponse = await fetch('http://localhost:8000/api/auth/me', {
           headers: {
@@ -92,26 +88,26 @@ export default function DebugTestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-slate-50 p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-4">Backend Connection Test</h1>
+        <h1 className="text-3xl font-bold mb-4 text-gradient-primary">Backend Connection Test</h1>
 
         <button
           onClick={testConnection}
-          className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-bold mb-6"
+          className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:scale-102 hover:brightness-110 px-6 py-3 rounded-xl font-semibold shadow-glow-cyan transition-all duration-150 active:scale-95 mb-6"
         >
           Run Tests
         </button>
 
-        <div className="bg-black rounded-lg p-4 font-mono text-sm h-96 overflow-y-auto">
+        <div className="glass-card rounded-2xl p-4 font-mono text-sm h-96 overflow-y-auto">
           {logs.map((log, i) => (
             <div key={i} className="mb-1">{log}</div>
           ))}
         </div>
 
-        <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-          <h2 className="font-bold mb-2">Instructions:</h2>
-          <ol className="list-decimal list-inside space-y-1">
+        <div className="mt-4 glass-card rounded-2xl p-4">
+          <h2 className="font-bold mb-2 text-slate-300">Instructions:</h2>
+          <ol className="list-decimal list-inside space-y-1 text-slate-400">
             <li>Click "Run Tests" button</li>
             <li>Watch the logs above</li>
             <li>Tell me what errors you see in red (❌)</li>

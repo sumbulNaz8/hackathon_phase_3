@@ -45,60 +45,61 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gold-medium opacity-5 rounded-full blur-3xl floating-element"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gold-light opacity-5 rounded-full blur-3xl floating-element-2"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
       </div>
 
       {/* Main Container */}
       <div className="w-full max-w-md mx-auto">
         {/* Signup Card */}
-        <div className="relative z-10 elegant-card rounded-3xl p-8 md:p-10 w-full max-w-md mx-auto shadow-elegant-lg animate-scale-in backdrop-blur-sm">
+        <div className="glass-card rounded-3xl p-8 md:p-10 w-full max-w-md mx-auto animate-scale-in">
           {/* Logo */}
           <div className="text-center mb-8">
             <div className="relative inline-block mb-4">
-              <CheckSquare className="w-20 h-20 text-gold-medium mx-auto animate-glow-pulse" />
-              <div className="absolute inset-0 bg-gold-medium opacity-20 blur-2xl"></div>
+              <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-glow-primary">
+                <CheckSquare className="w-10 h-10 text-white" />
+              </div>
             </div>
-            <h1 className="text-4xl font-bold text-gradient mb-2">
+            <h1 className="text-4xl font-bold text-gradient-primary mb-2">
               Create Account
             </h1>
-            <p className="text-cream text-lg text-subtle">Start managing tasks</p>
+            <p className="text-slate-400 text-lg">Start managing tasks</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Input */}
             <div>
-              <label className="block text-cream font-semibold mb-2 text-lg">Name</label>
+              <label className="block text-slate-300 font-semibold mb-2 text-lg">Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
                 required
-                className="w-full px-4 py-4 rounded-xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none text-base elegant-input"
+                className="w-full px-4 py-4 rounded-xl border-2 border-slate-600 bg-slate-800/60 text-slate-50 placeholder-slate-500 transition-all duration-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 text-base"
               />
             </div>
 
             {/* Email Input */}
             <div>
-              <label className="block text-cream font-semibold mb-2 text-lg">Email</label>
+              <label className="block text-slate-300 font-semibold mb-2 text-lg">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full px-4 py-4 rounded-xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none text-base elegant-input"
+                className="w-full px-4 py-4 rounded-xl border-2 border-slate-600 bg-slate-800/60 text-slate-50 placeholder-slate-500 transition-all duration-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 text-base"
               />
             </div>
 
             {/* Password Input */}
             <div>
-              <label className="block text-cream font-semibold mb-2 text-lg">Password</label>
+              <label className="block text-slate-300 font-semibold mb-2 text-lg">Password</label>
               <input
                 type="password"
                 value={password}
@@ -106,7 +107,7 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 required
                 minLength={8}
-                className="w-full px-4 py-4 rounded-xl border-0 bg-white/10 backdrop-blur-sm text-cream placeholder-cream/60 transition-all duration-300 outline-none text-base elegant-input"
+                className="w-full px-4 py-4 rounded-xl border-2 border-slate-600 bg-slate-800/60 text-slate-50 placeholder-slate-500 transition-all duration-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 text-base"
               />
             </div>
 
@@ -114,16 +115,16 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 text-lg font-bold text-brown-dark rounded-xl btn-premium disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+              className="w-full py-4 text-lg font-semibold text-white rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 shadow-glow-primary hover:scale-102 hover:brightness-110 transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span className="relative z-10">{loading ? 'Creating...' : 'Sign Up'}</span>
+              {loading ? 'Creating...' : 'Sign Up'}
             </button>
           </form>
 
           {/* Login Link */}
-          <p className="text-center mt-8 text-cream text-base text-subtle">
+          <p className="text-center mt-8 text-slate-400 text-base">
             Already have an account?{' '}
-            <Link href="/login" className="text-gold-light hover:text-gold-medium font-bold transition-colors underline">
+            <Link href="/login" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors">
               Login
             </Link>
           </p>

@@ -18,42 +18,42 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+      document.body.style.overflow = 'hidden';
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = ''; // Reset overflow when modal closes
+      document.body.style.overflow = '';
     };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm" 
+      <div
+        className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
-      
+
       {/* Modal Card */}
-      <div 
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden"
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+      <div
+        className="relative bg-slate-900/50 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-card-hover w-full max-w-md z-10 overflow-hidden animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-[#5D4037] px-6 py-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-[#FFC107]">{title}</h2>
-          <button 
+        <div className="bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-4 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-white">{title}</h2>
+          <button
             onClick={onClose}
-            className="text-[#FFC107] hover:text-[#FFD54F] transition-colors"
+            className="text-white/80 hover:text-white transition-colors"
             aria-label="Close modal"
           >
             <X size={24} />
           </button>
         </div>
-        
+
         {/* Content */}
         <div className="p-6">
           {children}

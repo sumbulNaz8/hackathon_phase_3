@@ -4,38 +4,39 @@ import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'danger' | 'success';
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
 
-export const Button = ({ 
-  children, 
-  variant = 'primary', 
-  size = 'md', 
+export const Button = ({
+  children,
+  variant = 'primary',
+  size = 'md',
   isLoading = false,
   className = '',
-  ...props 
+  ...props
 }: ButtonProps) => {
-  const baseClasses = 'font-bold rounded-lg transition-all duration-200 flex items-center justify-center';
-  
+  const baseClasses = 'font-semibold rounded-lg transition-all duration-150 flex items-center justify-center';
+
   const variantClasses = {
-    primary: 'bg-[#FFC107] text-[#3E2723] hover:bg-[#FFD54F] active:scale-95',
-    secondary: 'bg-[#8D6E63] text-white hover:bg-[#BCAAA4] active:scale-95',
-    danger: 'bg-[#EF5350] text-white hover:bg-[#FF7F7F] active:scale-95',
-    success: 'bg-[#66BB6A] text-white hover:bg-[#81C784] active:scale-95',
+    primary: 'bg-gradient-to-r from-indigo-500 to-violet-500 text-white hover:scale-102 hover:brightness-110 hover:shadow-glow-primary active:scale-95',
+    secondary: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:scale-102 hover:brightness-110 hover:shadow-glow-blue active:scale-95',
+    danger: 'bg-gradient-to-r from-red-500 to-rose-500 text-white hover:scale-102 hover:brightness-110 hover:shadow-glow-rose active:scale-95',
+    success: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:scale-102 hover:brightness-110 hover:shadow-glow-emerald active:scale-95',
+    outline: 'border-2 border-indigo-500 text-indigo-400 hover:bg-indigo-500/10 hover:border-violet-500 hover:text-violet-400 active:scale-95',
   };
-  
+
   const sizeClasses = {
     sm: 'text-sm py-2 px-4',
     md: 'text-base py-3 px-6',
     lg: 'text-lg py-4 px-8',
   };
-  
+
   const disabledClasses = isLoading ? 'opacity-50 cursor-not-allowed' : '';
-  
+
   const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className}`;
-  
+
   return (
     <button className={classes} disabled={isLoading || props.disabled} {...props}>
       {isLoading ? (

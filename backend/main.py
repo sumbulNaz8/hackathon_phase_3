@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timedelta
 import jwt
-from passlib.context import CryptContext
+import bcrypt
 
 # Initialize FastAPI
 app = FastAPI(title="Phase II Todo API", version="1.0.0")
@@ -23,7 +23,6 @@ app.add_middleware(
 # ═══════════════════════════════════════════
 # SECURITY & AUTH SETUP
 # ═══════════════════════════════════════════
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = "hackathon-phase2-secret-key-change-in-production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 7
@@ -74,10 +73,16 @@ class TaskUpdate(BaseModel):
 # HELPER FUNCTIONS
 # ═══════════════════════════════════════════
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    # Hash password using bcrypt directly
+    password_bytes = password.encode('utf-8')[:72]  # Truncate to 72 bytes max
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password_bytes, salt).decode('utf-8')
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    # Verify password using bcrypt directly
+    password_bytes = plain_password.encode('utf-8')[:72]  # Truncate to 72 bytes max
+    hashed_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
@@ -477,4 +482,4 @@ async def get_dashboard_analytics(user_id: str):
 # ═══════════════════════════════════════════
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

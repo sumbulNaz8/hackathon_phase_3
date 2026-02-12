@@ -62,7 +62,7 @@ export const authAPI = {
     } catch (error) {
       console.error('🔴 Signup fetch error:', error);
       if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new Error('Network error: Could not connect to the server. Please check if the backend is running on http://localhost:8000');
+        throw new Error('Network error: Could not connect to the server. Please check if the backend is running on http://localhost:8001');
       }
       throw error;
     }
