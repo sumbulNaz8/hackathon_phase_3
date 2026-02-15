@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Square, CheckSquare, Trash2, Menu, X, Tag, Sun, Moon, Coffee, Award, TrendingUp } from 'lucide-react';
+import { Plus, Square, Check, Trash2, Menu, X, Tag, Sun, Moon, Coffee, Award, TrendingUp } from 'lucide-react';
 import { useToast } from '@/context/toast-context';
 
 // Define TypeScript interfaces
@@ -385,7 +385,7 @@ const TaskDashboard = () => {
                         className={`p-2 rounded-full transition-all duration-200 ${task.completed ? 'text-emerald-400 bg-emerald-900/30' : 'text-slate-400 hover:text-indigo-400'}`}
                         aria-label={task.completed ? 'Mark as incomplete' : 'Mark as complete'}
                       >
-                        {task.completed ? <CheckSquare size={24} /> : <Square size={24} />}
+                        {task.completed ? <Check size={24} /> : <Square size={24} />}
                       </button>
                     </div>
                     <div className={`col-span-5 ${task.completed ? 'line-through text-slate-500' : 'text-slate-50'} font-medium`}>

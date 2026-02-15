@@ -1,8 +1,9 @@
 // components/layout/Header.tsx
 
 import { User } from '@/lib/types';
-import { LogOut, CheckSquare, Clock } from 'lucide-react';
+import { LogOut, Check, Clock, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
   user: User | null;
@@ -11,6 +12,7 @@ interface HeaderProps {
 
 export const Header = ({ user, onLogout }: HeaderProps) => {
   const { tokenExpiry } = useAuth();
+  const router = useRouter();
 
   // Calculate if token is expiring soon (less than 24 hours)
   const isTokenExpiringSoon = tokenExpiry && (tokenExpiry.getTime() - Date.now()) < (24 * 60 * 60 * 1000);
@@ -20,7 +22,7 @@ export const Header = ({ user, onLogout }: HeaderProps) => {
       <div className="container mx-auto max-w-6xl flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-glow-primary">
-            <CheckSquare className="w-8 h-8 text-white" />
+            <Check className="w-8 h-8 text-white" />
           </div>
           <div className="flex flex-col">
             <h1 className="text-2xl font-bold text-gradient-primary">Todo App</h1>
@@ -35,6 +37,13 @@ export const Header = ({ user, onLogout }: HeaderProps) => {
 
         {user && (
           <div className="flex items-center space-x-6">
+            <button
+              onClick={() => router.push('/chat')}
+              className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-violet-500 to-purple-500 text-white rounded-xl shadow-glow-secondary hover:scale-102 hover:brightness-110 transition-all duration-150 active:scale-95"
+            >
+              <MessageSquare size={18} />
+              <span className="font-semibold">AI Assistant</span>
+            </button>
             <span className="text-slate-300 text-lg">Hello, <span className="text-violet-400 font-semibold">{user.name}</span></span>
             <button
               onClick={onLogout}

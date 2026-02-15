@@ -1,115 +1,222 @@
-# Feature Specification: [FEATURE NAME]
+# Feature Specification: [FEATURE_NAME]
 
-**Feature Branch**: `[###-feature-name]`  
-**Created**: [DATE]  
-**Status**: Draft  
-**Input**: User description: "$ARGUMENTS"
-
-## User Scenarios & Testing *(mandatory)*
-
-<!--
-  IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
-  Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
-  you should still have a viable MVP (Minimum Viable Product) that delivers value.
-  
-  Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
-  Think of each story as a standalone slice of functionality that can be:
-  - Developed independently
-  - Tested independently
-  - Deployed independently
-  - Demonstrated to users independently
--->
-
-### User Story 1 - [Brief Title] (Priority: P1)
-
-[Describe this user journey in plain language]
-
-**Why this priority**: [Explain the value and why it has this priority level]
-
-**Independent Test**: [Describe how this can be tested independently - e.g., "Can be fully tested by [specific action] and delivers [specific value]"]
-
-**Acceptance Scenarios**:
-
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
-2. **Given** [initial state], **When** [action], **Then** [expected outcome]
+**Status**: [Draft/Approved/In Progress/Completed]
+**Constitution Version**: [CONSTITUTION_VERSION]
+**Created**: [DATE]
+**Last Updated**: [DATE]
 
 ---
 
-### User Story 2 - [Brief Title] (Priority: P2)
+## Overview
 
-[Describe this user journey in plain language]
-
-**Why this priority**: [Explain the value and why it has this priority level]
-
-**Independent Test**: [Describe how this can be tested independently]
-
-**Acceptance Scenarios**:
-
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+[Brief 2-3 sentence description of the feature]
 
 ---
 
-### User Story 3 - [Brief Title] (Priority: P3)
+## Business Context
 
-[Describe this user journey in plain language]
+### Problem Statement
 
-**Why this priority**: [Explain the value and why it has this priority level]
+[What problem does this feature solve? Why is it needed?]
 
-**Independent Test**: [Describe how this can be tested independently]
+### User Impact
 
-**Acceptance Scenarios**:
+[Who benefits from this feature? How does it improve their experience?]
 
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+### Success Criteria
+
+- [ ] [Criteria 1]
+- [ ] [Criteria 2]
+- [ ] [Criteria 3]
 
 ---
 
-[Add more user stories as needed, each with an assigned priority]
+## Functional Requirements
+
+### Requirement 1: [TITLE]
+
+**Description**: [Detailed requirement description]
+
+**Acceptance Criteria**:
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+
+**Priority**: [Must Have/Should Have/Could Have]
+
+---
+
+### Requirement 2: [TITLE]
+
+[Continue for each requirement]
+
+---
+
+## Non-Functional Requirements
+
+### Performance
+
+- [API response time]: [Requirement]
+- [Page load time]: [Requirement]
+
+### Security
+
+- [Authentication]: [Requirement]
+- [Data encryption]: [Requirement]
+
+### Usability
+
+- [Accessibility]: [Requirement]
+- [Mobile support]: [Requirement]
+
+---
+
+## User Stories
+
+### Story 1: As a [USER_TYPE], I want to [ACTION], so that [BENEFIT]
+
+**Acceptance Criteria**:
+- [ ] Given [CONTEXT], when [ACTION], then [OUTCOME]
+- [ ] Given [CONTEXT], when [ACTION], then [OUTCOME]
+
+**Priority**: [High/Medium/Low]
+
+---
+
+### Story 2: [Continue for each user story]
+
+---
+
+## Technical Constraints
+
+- [Technology limitations]
+- [Platform limitations]
+- [Integration constraints]
+
+---
+
+## Dependencies
+
+### Internal Dependencies
+
+- [Feature/System]: [Description of dependency]
+
+### External Dependencies
+
+- [Service/API]: [Description of dependency]
+
+---
+
+## UI/UX Requirements
+
+### Screens/Components
+
+```
+[Description or mockup of UI elements]
+```
+
+### User Flow
+
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+### Interactions
+
+- [Interaction 1]: [Description]
+- [Interaction 2]: [Description]
+
+---
+
+## API Requirements
+
+### New Endpoints
+
+```
+[METHOD] /path/to/endpoint
+Description: [What it does]
+Request: [Request body structure]
+Response: [Response structure]
+Authentication: [Required/Optional]
+```
+
+### Modified Endpoints
+
+```
+[METHOD] /path/to/endpoint
+Changes: [What changed]
+Breaking: [Yes/No]
+Migration: [How to handle old version]
+```
+
+---
+
+## Data Model Changes
+
+### New Models
+
+```python
+[Python/TypeScript model definitions]
+```
+
+### Modified Models
+
+```python
+[Show before/after for changes]
+```
+
+### Database Schema Changes
+
+```sql
+[SQL DDL statements or migration description]
+```
+
+---
+
+## Testing Requirements
+
+### Test Scenarios
+
+| Scenario | Steps | Expected Result |
+|----------|--------|----------------|
+| [Scenario 1] | [Test steps] | [Expected outcome] |
+| [Scenario 2] | [Test steps] | [Expected outcome] |
 
 ### Edge Cases
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right edge cases.
--->
+- [Edge case 1]
+- [Edge case 2]
 
-- What happens when [boundary condition]?
-- How does system handle [error scenario]?
+---
 
-## Requirements *(mandatory)*
+## Migration Strategy
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right functional requirements.
--->
+### Data Migration
 
-### Functional Requirements
+[If data migration is needed, describe the process]
 
-- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
-- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
-- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
-- **FR-005**: System MUST [behavior, e.g., "log all security events"]
+### Backward Compatibility
 
-*Example of marking unclear requirements:*
+- [Is this feature backward compatible?]
+- [How will old clients be handled?]
 
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+---
 
-### Key Entities *(include if feature involves data)*
+## Open Questions
 
-- **[Entity 1]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
+1. [Question 1]
+2. [Question 2]
 
-## Success Criteria *(mandatory)*
+---
 
-<!--
-  ACTION REQUIRED: Define measurable success criteria.
-  These must be technology-agnostic and measurable.
--->
+## Appendix
 
-### Measurable Outcomes
+### References
 
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
-- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+- [Related documents]
+- [External resources]
+
+### Change Log
+
+| Date | Version | Changes |
+|------|---------|---------|
+| [DATE] | 1.0 | Initial version |

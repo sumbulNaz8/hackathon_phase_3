@@ -1,7 +1,7 @@
 // components/tasks/TaskCard.tsx
 
 import { Task } from '@/lib/types';
-import { Circle, CheckCircle, Edit3, Trash2, AlertTriangle, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Circle, Check, Edit3, Trash2, AlertTriangle, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface TaskCardProps {
   task: Task;
@@ -67,7 +67,7 @@ export const TaskCard = ({ task, onToggle, onEdit, onDelete }: TaskCardProps) =>
               }`}
               aria-label={task.completed ? 'Mark as incomplete' : 'Mark as complete'}
             >
-              {task.completed ? <CheckCircle size={20} /> : <Circle size={20} />}
+              {task.completed ? <Check size={20} /> : <Circle size={20} />}
             </button>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-3 flex-wrap">

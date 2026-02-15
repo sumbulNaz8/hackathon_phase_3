@@ -32,6 +32,9 @@ export default function DashboardLayout({
           }}
         />
       </div>
+
+      {/* ChatBot Placeholder - Chatbot will be rendered here by page.tsx */}
+      <div id="chatbot-container"></div>
     </div>
   );
 }

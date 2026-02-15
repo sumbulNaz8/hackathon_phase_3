@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
+import { Check, AlertCircle, Info, X } from 'lucide-react';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -27,7 +27,7 @@ const Toast = ({ id, message, type, onClose }: ToastProps) => {
   const getTypeConfig = () => {
     switch (type) {
       case 'success':
-        return { icon: CheckCircle, bgColor: 'bg-green-500', textColor: 'text-green-500' };
+        return { icon: Check, bgColor: 'bg-green-500', textColor: 'text-green-500' };
       case 'error':
         return { icon: AlertCircle, bgColor: 'bg-red-500', textColor: 'text-red-500' };
       case 'warning':

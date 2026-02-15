@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, CheckSquare, Brain, Filter, Calendar, AlertTriangle, CheckCircle2, BarChart3, Sparkles } from 'lucide-react'
+import { Plus, CheckCircle, Brain, Filter, Calendar, AlertTriangle, CheckCircle2, BarChart3, Sparkles } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
 import { TaskList } from '@/components/tasks/TaskList'
 import { TaskForm } from '@/components/tasks/TaskForm'
@@ -12,32 +12,45 @@ import { tasksAPI, analyticsAPI } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { ProtectedRoute } from '@/components/ui/ProtectedRoute'
 import toast from 'react-hot-toast'
+import ChatWidget from '@/components/ChatWidget'
 
 export default function DashboardPage() {
+  console.log('DashboardPage rendering...')
+
   const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [filter, setFilter] = useState<{ completed?: boolean, priority?: string, category?: string, search?: string }>({})
   const [analytics, setAnalytics] = useState<any>(null)
   const [analyticsLoading, setAnalyticsLoading] = useState(false)
+  const [showChat, setShowChat] = useState(true)
   const { user, logout } = useAuth()
+
+  console.log('Dashboard state:', { showChat, user, loading })
 
   useEffect(() => {
     if (user) {
       fetchTasks()
       fetchAnalytics()
+    } else {
+      setLoading(false)
     }
   }, [user])
 
   const fetchTasks = async () => {
-    if (!user) return
+    if (!user) {
+      setLoading(false)
+      return
+    }
 
     try {
       setLoading(true)
       const data = await tasksAPI.getAll(user.id, filter);
 
       if (!Array.isArray(data)) {
+        console.error('Invalid data received:', data)
         setTasks([]);
+        setLoading(false);
         return;
       }
 
@@ -49,6 +62,7 @@ export default function DashboardPage() {
 
       setTasks(sortedTasks);
     } catch (error: any) {
+      console.error('Error fetching tasks:', error)
       setTasks([]);
       toast.error(error.message || 'Failed to load tasks')
     } finally {
@@ -170,21 +184,11 @@ export default function DashboardPage() {
     setFilter(newFilter)
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading tasks...</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <ProtectedRoute redirectTo="/login">
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-slate-50">
-        <Header user={user} onLogout={logout} />
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-slate-50">
+          <Header user={user} onLogout={logout} />
 
         <main className="container mx-auto px-4 py-8 max-w-6xl">
           <div className="w-full max-w-6xl mx-auto">
@@ -203,7 +207,7 @@ export default function DashboardPage() {
               <div className="glass-card glass-card-hover rounded-2xl p-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-indigo-500/20 shadow-glow-primary">
-                    <CheckSquare className="w-5 h-5 text-indigo-400" />
+                    <CheckCircle className="w-5 h-5 text-indigo-400" />
                   </div>
                   <div>
                     <p className="text-slate-400 text-xs">Total Tasks</p>
@@ -332,7 +336,7 @@ export default function DashboardPage() {
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center gap-2">
                     <div className="p-2 rounded-lg bg-indigo-500/20 shadow-glow-primary">
-                      <CheckSquare className="w-5 h-5 text-indigo-400" />
+                      <CheckCircle className="w-5 h-5 text-indigo-400" />
                     </div>
                     <h2 className="text-xl font-bold text-gradient-primary">
                       Your Tasks ({tasks.length})
@@ -373,6 +377,45 @@ export default function DashboardPage() {
           )}
         </Modal>
       </div>
+
+      {/* ChatBot Floating Widget - Inside ProtectedRoute */}
+      {!showChat ? (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999999, cursor: 'pointer' }} onClick={() => { console.log('Chatbot button clicked!'); setShowChat(true) }}>
+          <div style={{
+            width: '100px',
+            height: '100px',
+            background: 'linear-gradient(to right, rgb(220, 38, 38), rgb(185, 28, 28))',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '40px',
+            border: '4px solid white',
+            boxShadow: '0 0 80px rgba(220, 38, 38, 1), 0 0 120px rgba(220, 38, 38, 0.8)',
+            animation: 'pulse 2s infinite'
+          }}>
+            🤖
+          </div>
+        </div>
+      ) : (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999999, width: '400px', height: '500px', background: 'rgba(30, 41, 59, 0.8)', borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{ background: 'linear-gradient(to right, rgb(239, 68, 68), rgb(225, 29, 72))', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white', fontSize: '20px' }}>
+              <span>🤖</span>
+              <span style={{ fontWeight: 600 }}>Todo Assistant</span>
+            </div>
+            <button onClick={() => setShowChat(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '20px' }}>✕</button>
+          </div>
+          <ChatWidget
+            tasks={tasks}
+            onCreateTask={handleCreateTask}
+            onDeleteTask={handleDeleteTask}
+            onToggleTask={handleToggleTask}
+            user={user}
+          />
+        </div>
+      )}
+    </>
     </ProtectedRoute>
   )
 }
