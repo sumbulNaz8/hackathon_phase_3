@@ -1,1 +1,0 @@
-"""Skills package for the backend application."""
