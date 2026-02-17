@@ -1,0 +1,26 @@
+{
+  "name": "minimal-frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@next/swc-linux-x64-gnu": "^16.1.6",
+    "@openai/chatkit-react": "^1.5.0",
+    "@types/uuid": "^11.0.0",
+    "lucide-react": "^0.564.0",
+    "next": "^14.2.15",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.6.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "25.0.9",
+    "@types/react": "19.2.8",
+    "typescript": "5.9.3"
+  }
+}
