@@ -1,42 +1,64 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Spinner } from '@/components/ui/Spinner'; // Assuming you have a spinner component
+import { Loading } from '@/components/ui/Loading';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  redirectTo?: string; // Where to redirect if not authenticated
+  redirectTo?: string;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
-  redirectTo = '/login' 
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  redirectTo = '/login'
 }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user, token } = useAuth();
   const router = useRouter();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  // Mark when component has mounted on client
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push(redirectTo);
-    }
-  }, [isAuthenticated, loading, redirectTo, router]);
+    console.log('🔵 ProtectedRoute State:');
+    console.log('  - hasMounted:', hasMounted);
+    console.log('  - loading:', loading);
+    console.log('  - isAuthenticated:', isAuthenticated);
+    console.log('  - token exists:', !!token);
+    console.log('  - user:', user?.email);
 
-  // Show loading state while checking authentication
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spinner />
-      </div>
-    );
+    // Only redirect after we've mounted and loading is complete
+    if (hasMounted && !loading && !isAuthenticated) {
+      console.log('🔴 Not authenticated after loading complete, redirecting to:', redirectTo);
+      router.replace(redirectTo);
+    }
+  }, [hasMounted, loading, isAuthenticated, token, user, redirectTo, router]);
+
+  // Don't render anything until mounted on client (prevents hydration issues)
+  if (!hasMounted) {
+    console.log('⏳ ProtectedRoute - waiting for mount');
+    return <Loading />;
   }
 
-  // If authenticated, render the children
+  // Show loading while checking authentication
+  if (loading) {
+    console.log('⏳ ProtectedRoute - checking authentication...');
+    return <Loading />;
+  }
+
+  // If authenticated, render children
   if (isAuthenticated) {
+    console.log('✅ ProtectedRoute - authenticated, rendering dashboard for:', user?.email);
     return <>{children}</>;
   }
 
-  // If not authenticated and not redirecting yet, return null
-  return null;
+  // Not authenticated - show loading while redirect happens
+  console.log('⏳ ProtectedRoute - redirecting to login...');
+  return <Loading />;
 };
+
+export default ProtectedRoute;

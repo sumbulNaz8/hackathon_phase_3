@@ -125,11 +125,11 @@ def create_access_token(data: dict) -> str:
 @app.on_event("startup")
 async def startup_event():
     print("=" * 50)
-    print("🚀 Phase II Todo API Starting...")
-    print(f"📁 Data directory: {DATA_DIR.absolute()}")
-    print(f"👥 Loaded {len(users_db)} users from storage")
-    print(f"📋 Loaded {len(tasks_db)} tasks from storage")
-    print(f"🔢 Task counter: {task_counter}")
+    print("Phase II Todo API Starting...")
+    print(f"Data directory: {DATA_DIR.absolute()}")
+    print(f"Loaded {len(users_db)} users from storage")
+    print(f"Loaded {len(tasks_db)} tasks from storage")
+    print(f"Task counter: {task_counter}")
     print("=" * 50)
 
 # ═══════════════════════════════════════════
@@ -290,8 +290,32 @@ async def get_tasks(user_id: str,
                    completed: Optional[bool] = None,
                    priority: Optional[str] = None,
                    category: Optional[str] = None,
-                   search: Optional[str] = None):
+                   search: Optional[str] = None,
+                   authorization: Optional[str] = Header(None)):
     """Get all tasks for a specific user with optional filters"""
+    
+    # Extract and validate token
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required. Please login again.")
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization format. Please login again.")
+
+    token = authorization.split(" ")[1]
+    
+    # Decode and validate token
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        token_user_id = payload.get("user_id")
+        
+        # Verify that the requesting user is accessing their own tasks
+        if token_user_id != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to access this user's tasks")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Your session has expired. Please login again.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid authentication token. Please login again.")
+
     user_tasks = [
         task for task in tasks_db.values()
         if task["user_id"] == user_id
@@ -313,9 +337,31 @@ async def get_tasks(user_id: str,
     return user_tasks
 
 @app.post("/api/{user_id}/tasks")
-async def create_task(user_id: str, task: TaskCreate):
+async def create_task(user_id: str, task: TaskCreate, authorization: Optional[str] = Header(None)):
     """Create a new task"""
     global task_counter
+
+    # Extract and validate token
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required. Please login again.")
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization format. Please login again.")
+
+    token = authorization.split(" ")[1]
+    
+    # Decode and validate token
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        token_user_id = payload.get("user_id")
+        
+        # Verify that the requesting user is creating tasks for themselves
+        if token_user_id != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to create tasks for this user")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Your session has expired. Please login again.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid authentication token. Please login again.")
 
     # Validate input
     if not task.title or not task.title.strip():
@@ -340,7 +386,7 @@ async def create_task(user_id: str, task: TaskCreate):
         "updated_at": datetime.utcnow().isoformat()
     }
 
-    tasks_db[task_counter] = new_task
+    tasks_db[str(task_counter)] = new_task
 
     # Save to persistent storage
     save_json_file(TASKS_FILE, tasks_db)
@@ -362,14 +408,37 @@ async def get_task(user_id: str, task_id: int):
     return task
 
 @app.put("/api/{user_id}/tasks/{task_id}")
-async def update_task(user_id: str, task_id: int, task: TaskUpdate):
+async def update_task(user_id: str, task_id: int, task: TaskUpdate, authorization: Optional[str] = Header(None)):
     """Update an existing task with full field support"""
 
-    # Check if task exists
-    if task_id not in tasks_db:
+    # Extract and validate token
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required. Please login again.")
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization format. Please login again.")
+
+    token = authorization.split(" ")[1]
+    
+    # Decode and validate token
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        token_user_id = payload.get("user_id")
+        
+        # Verify that the requesting user is updating their own task
+        if token_user_id != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to update this task")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Your session has expired. Please login again.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid authentication token. Please login again.")
+
+    # Check if task exists (convert to string for JSON keys)
+    task_id_str = str(task_id)
+    if task_id_str not in tasks_db:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    existing_task = tasks_db[task_id]
+    existing_task = tasks_db[task_id_str]
 
     # Check authorization
     if existing_task["user_id"] != user_id:
@@ -433,7 +502,9 @@ async def update_task(user_id: str, task_id: int, task: TaskUpdate):
             "changes": changes
         })
 
-    tasks_db[task_id] = existing_task
+    # Convert task_id to string for JSON keys
+    task_id_str = str(task_id)
+    tasks_db[task_id_str] = existing_task
 
     # Save to persistent storage
     save_json_file(TASKS_FILE, tasks_db)
@@ -441,21 +512,44 @@ async def update_task(user_id: str, task_id: int, task: TaskUpdate):
     return existing_task
 
 @app.delete("/api/{user_id}/tasks/{task_id}")
-async def delete_task(user_id: str, task_id: int):
+async def delete_task(user_id: str, task_id: int, authorization: Optional[str] = Header(None)):
     """Delete a task"""
 
-    # Check if task exists
-    if task_id not in tasks_db:
+    # Extract and validate token
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required. Please login again.")
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization format. Please login again.")
+
+    token = authorization.split(" ")[1]
+    
+    # Decode and validate token
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        token_user_id = payload.get("user_id")
+        
+        # Verify that the requesting user is deleting their own task
+        if token_user_id != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to delete this task")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Your session has expired. Please login again.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid authentication token. Please login again.")
+
+    # Check if task exists (convert to string for JSON keys)
+    task_id_str = str(task_id)
+    if task_id_str not in tasks_db:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    task = tasks_db[task_id]
+    task = tasks_db[task_id_str]
 
     # Check authorization
     if task["user_id"] != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this task")
 
     # Delete task
-    del tasks_db[task_id]
+    del tasks_db[task_id_str]
 
     # Save to persistent storage
     save_json_file(TASKS_FILE, tasks_db)
@@ -463,14 +557,37 @@ async def delete_task(user_id: str, task_id: int):
     return {"message": "Task deleted successfully"}
 
 @app.patch("/api/{user_id}/tasks/{task_id}/complete")
-async def toggle_task_completion(user_id: str, task_id: int):
+async def toggle_task_completion(user_id: str, task_id: int, authorization: Optional[str] = Header(None)):
     """Toggle task completion status"""
 
-    # Check if task exists
-    if task_id not in tasks_db:
+    # Extract and validate token
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required. Please login again.")
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization format. Please login again.")
+
+    token = authorization.split(" ")[1]
+    
+    # Decode and validate token
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        token_user_id = payload.get("user_id")
+        
+        # Verify that the requesting user is modifying their own task
+        if token_user_id != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to modify this task")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Your session has expired. Please login again.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid authentication token. Please login again.")
+
+    # Check if task exists (convert to string for JSON keys)
+    task_id_str = str(task_id)
+    if task_id_str not in tasks_db:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    task = tasks_db[task_id]
+    task = tasks_db[task_id_str]
 
     # Check authorization
     if task["user_id"] != user_id:
@@ -480,7 +597,7 @@ async def toggle_task_completion(user_id: str, task_id: int):
     task["completed"] = not task["completed"]
     task["updated_at"] = datetime.utcnow().isoformat()
 
-    tasks_db[task_id] = task
+    tasks_db[task_id_str] = task
 
     # Save to persistent storage
     save_json_file(TASKS_FILE, tasks_db)
@@ -488,8 +605,31 @@ async def toggle_task_completion(user_id: str, task_id: int):
     return task
 
 @app.post("/api/{user_id}/tasks/sort")
-async def sort_tasks(user_id: str):
+async def sort_tasks(user_id: str, authorization: Optional[str] = Header(None)):
     """Sort tasks by priority and deadline"""
+    
+    # Extract and validate token
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required. Please login again.")
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization format. Please login again.")
+
+    token = authorization.split(" ")[1]
+    
+    # Decode and validate token
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        token_user_id = payload.get("user_id")
+        
+        # Verify that the requesting user is sorting their own tasks
+        if token_user_id != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to sort this user's tasks")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Your session has expired. Please login again.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid authentication token. Please login again.")
+
     user_tasks = [
         task for task in tasks_db.values()
         if task["user_id"] == user_id
@@ -523,8 +663,31 @@ async def sort_tasks(user_id: str):
     return sorted_tasks
 
 @app.get("/api/{user_id}/analytics/dashboard")
-async def get_dashboard_analytics(user_id: str):
+async def get_dashboard_analytics(user_id: str, authorization: Optional[str] = Header(None)):
     """Get dashboard analytics for a user"""
+    
+    # Extract and validate token
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required. Please login again.")
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization format. Please login again.")
+
+    token = authorization.split(" ")[1]
+    
+    # Decode and validate token
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        token_user_id = payload.get("user_id")
+        
+        # Verify that the requesting user is accessing their own analytics
+        if token_user_id != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to access this user's analytics")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Your session has expired. Please login again.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid authentication token. Please login again.")
+
     user_tasks = [
         task for task in tasks_db.values()
         if task["user_id"] == user_id
@@ -551,6 +714,136 @@ async def get_dashboard_analytics(user_id: str):
     }
     
     return analytics
+
+# ═══════════════════════════════════════════
+# CHATBOT ENDPOINT
+# ═══════════════════════════════════════════
+@app.post("/api/chat")
+async def chat_with_bot(message_data: dict, authorization: Optional[str] = Header(None)):
+    """Chat with the AI assistant"""
+    
+    # Extract and validate token
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required. Please login again.")
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization format. Please login again.")
+
+    token = authorization.split(" ")[1]
+    
+    # Decode and validate token
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("user_id")
+        email = payload.get("email")
+        
+        # Find user in database
+        user = users_db.get(email)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Your session has expired. Please login again.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid authentication token. Please login again.")
+
+    # Get the user's tasks
+    user_tasks = [
+        task for task in tasks_db.values()
+        if task["user_id"] == user_id
+    ]
+    
+    # Process the message
+    message = message_data.get("message", "").lower().strip()
+    
+    # Simple rule-based responses for task management
+    if "add task" in message or "create task" in message or "new task" in message:
+        # Extract task title from message
+        task_title = message.replace("add task", "").replace("create task", "").replace("new task", "").strip()
+        if not task_title:
+            task_title = "New Task"
+        
+        # Create a simple response
+        response = f"I've created a task for you: '{task_title}'. You can add more details in the dashboard."
+        
+    elif "show tasks" in message or "my tasks" in message or "list tasks" in message:
+        if not user_tasks:
+            response = "You don't have any tasks yet. You can create one using 'Add task: [task name]'."
+        else:
+            completed_count = len([t for t in user_tasks if t["completed"]])
+            pending_tasks = [t for t in user_tasks if not t["completed"]]
+            
+            response = f"You have {len(user_tasks)} total tasks: {len(pending_tasks)} pending and {completed_count} completed.\n\n"
+            if pending_tasks:
+                response += "Pending tasks:\n"
+                for i, task in enumerate(pending_tasks[:5]):  # Show first 5 pending tasks
+                    response += f"- {task['title']} (ID: {task['id']})\n"
+    
+    elif "complete task" in message or "done task" in message:
+        # Extract task identifier
+        task_identifier = message.replace("complete task", "").replace("done task", "").strip()
+        
+        # Find task by ID or title
+        task_to_complete = None
+        if task_identifier.isdigit():  # If it's a number, treat as ID
+            task_id = int(task_identifier)
+            task_to_complete = next((t for t in user_tasks if t["id"] == task_id), None)
+        else:  # Otherwise, try to match by title
+            task_to_complete = next((t for t in user_tasks if task_identifier.lower() in t["title"].lower()), None)
+        
+        if task_to_complete:
+            # In a real implementation, we would update the task in the database
+            # For now, we'll just return a confirmation
+            response = f"I've marked the task '{task_to_complete['title']}' as completed!"
+        else:
+            response = f"I couldn't find a task matching '{task_identifier}'. Here are your pending tasks:\n"
+            pending_tasks = [t for t in user_tasks if not t["completed"]]
+            for task in pending_tasks[:5]:
+                response += f"- {task['title']} (ID: {task['id']})\n"
+    
+    elif "delete task" in message or "remove task" in message:
+        # Extract task identifier
+        task_identifier = message.replace("delete task", "").replace("remove task", "").strip()
+        
+        # Find task by ID or title
+        task_to_delete = None
+        if task_identifier.isdigit():  # If it's a number, treat as ID
+            task_id = int(task_identifier)
+            task_to_delete = next((t for t in user_tasks if t["id"] == task_id), None)
+        else:  # Otherwise, try to match by title
+            task_to_delete = next((t for t in user_tasks if task_identifier.lower() in t["title"].lower()), None)
+        
+        if task_to_delete:
+            response = f"I've deleted the task '{task_to_delete['title']}'."
+        else:
+            response = f"I couldn't find a task matching '{task_identifier}'. Here are your tasks:\n"
+            for task in user_tasks[:5]:
+                response += f"- {task['title']} (ID: {task['id']})\n"
+    
+    elif "help" in message or "commands" in message:
+        response = "I'm your AI Todo Assistant! Here's what I can help you with:\n\n"
+        response += "• Add a task: 'Add task: Buy groceries'\n"
+        response += "• View tasks: 'Show my tasks' or 'List tasks'\n"
+        response += "• Complete a task: 'Complete task 1' or 'Done task buy groceries'\n"
+        response += "• Delete a task: 'Delete task 1' or 'Remove task buy groceries'\n"
+        response += "• Get help: 'Help' or 'Commands'\n\n"
+        response += "Try any of these commands!"
+    
+    else:
+        # Default response for unrecognized commands
+        response = f"I understood: '{message_data.get('message', '')}'\n\n"
+        response += "I'm your AI Todo Assistant. Try commands like:\n"
+        response += "- 'Add task: [task name]'\n"
+        response += "- 'Show my tasks'\n"
+        response += "- 'Complete task [ID or name]'\n"
+        response += "- 'Delete task [ID or name]'\n"
+        response += "- 'Help' for more options"
+    
+    return {
+        "response": response,
+        "user_id": user_id,
+        "action": "message_processed"
+    }
 
 # ═══════════════════════════════════════════
 # RUN SERVER

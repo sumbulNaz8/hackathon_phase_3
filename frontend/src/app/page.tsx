@@ -1,4 +1,4 @@
-import TaskDashboard from './task-dashboard-component';
+import TaskDashboard from '@/app/task-dashboard-component';
 
 export default function HomePage() {
   return <TaskDashboard />;

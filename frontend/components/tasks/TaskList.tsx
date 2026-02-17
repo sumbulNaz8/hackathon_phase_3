@@ -1,8 +1,5 @@
-// components/tasks/TaskList.tsx
-
 import { Task } from '@/lib/types';
 import { TaskCard } from './TaskCard';
-import { Check } from 'lucide-react';
 
 interface TaskListProps {
   tasks: Task[];
@@ -12,29 +9,22 @@ interface TaskListProps {
 }
 
 export const TaskList = ({ tasks, onToggle, onEdit, onDelete }: TaskListProps) => {
-  // Check if tasks is undefined or null
   if (!tasks || !Array.isArray(tasks)) {
     console.error('TaskList received invalid tasks:', tasks);
-    return (
-      <div className="bg-[#8D6E63] rounded-xl p-8 text-center">
-        <p className="text-white">Error loading tasks</p>
-      </div>
-    );
+    return <div>Error loading tasks</div>;
   }
 
-  // Empty state
   if (tasks.length === 0) {
     return (
-      <div className="bg-[#8D6E63] rounded-xl p-12 text-center shadow-md">
-        <Check className="w-16 h-16 text-[#BCAAA4] mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-white mb-2">No tasks yet!</h3>
-        <p className="text-[#BCAAA4]">Create your first task above to get started.</p>
+      <div>
+        <div>No tasks yet!</div>
+        <div>Create your first task above to get started.</div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div>
       {tasks.map(task => (
         <TaskCard
           key={task.id}

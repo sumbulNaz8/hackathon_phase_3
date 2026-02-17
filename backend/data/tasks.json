@@ -1,40 +1,88 @@
 {
-  "16": {
-    "id": 16,
-    "user_id": "user_2",
-    "title": "ydddf",
-    "description": "",
+  "23": {
+    "id": 23,
+    "user_id": "user_6",
+    "title": "Test Task from Auth",
+    "description": "Testing auth endpoints",
     "completed": false,
-    "priority": "medium",
+    "priority": "high",
     "category": "",
     "due_date": "",
     "tags": [],
     "status": "todo",
     "subtasks": [],
     "reminder": "",
-    "created_at": "2026-02-15T10:22:04.264577",
-    "updated_at": "2026-02-15T10:41:20.303373"
+    "created_at": "2026-02-15T23:55:54.722581",
+    "updated_at": "2026-02-15T23:55:54.722609"
   },
-  "17": {
-    "id": 17,
-    "user_id": "user_2",
-    "title": "gh",
-    "description": "",
+  "24": {
+    "id": 24,
+    "user_id": "user_8",
+    "title": "Test Task",
+    "description": "Testing connection",
     "completed": false,
-    "priority": "medium",
+    "priority": "high",
     "category": "",
     "due_date": "",
     "tags": [],
     "status": "todo",
     "subtasks": [],
     "reminder": "",
-    "created_at": "2026-02-15T11:39:08.105268",
-    "updated_at": "2026-02-15T11:39:08.105292"
+    "created_at": "2026-02-15T23:59:46.186091",
+    "updated_at": "2026-02-15T23:59:46.186106"
   },
-  "18": {
-    "id": 18,
+  "31": {
+    "id": 31,
+    "user_id": "user_10",
+    "title": "Task to Delete",
+    "description": "",
+    "completed": false,
+    "priority": "high",
+    "category": "",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-16T00:39:08.995457",
+    "updated_at": "2026-02-16T00:39:08.995508"
+  },
+  "32": {
+    "id": 32,
+    "user_id": "user_11",
+    "title": "Task to Delete",
+    "description": "",
+    "completed": false,
+    "priority": "high",
+    "category": "",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-16T00:40:18.546864",
+    "updated_at": "2026-02-16T00:40:18.546929"
+  },
+  "37": {
+    "id": 37,
     "user_id": "user_2",
-    "title": "a",
+    "title": "apple",
+    "description": "",
+    "completed": true,
+    "priority": "medium",
+    "category": "General",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-16T00:47:39.089177",
+    "updated_at": "2026-02-16T00:49:50.353642"
+  },
+  "38": {
+    "id": 38,
+    "user_id": "user_2",
+    "title": "mango",
     "description": "",
     "completed": false,
     "priority": "medium",
@@ -44,13 +92,87 @@
     "status": "todo",
     "subtasks": [],
     "reminder": "",
-    "created_at": "2026-02-15T19:56:11.152089",
-    "updated_at": "2026-02-15T19:56:11.152168"
+    "created_at": "2026-02-16T00:49:09.528141",
+    "updated_at": "2026-02-16T00:49:09.528148"
   },
-  "22": {
-    "id": 22,
+  "39": {
+    "id": 39,
+    "user_id": "user_2",
+    "title": "mere   m apple  kr do",
+    "description": "",
+    "completed": true,
+    "priority": "medium",
+    "category": "General",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-16T00:51:03.372534",
+    "updated_at": "2026-02-16T00:53:50.263599"
+  },
+  "41": {
+    "id": 41,
+    "user_id": "user_2",
+    "title": "qwqw",
+    "description": "",
+    "completed": true,
+    "priority": "medium",
+    "category": "General",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-16T01:06:52.004977",
+    "updated_at": "2026-02-17T17:09:15.004886",
+    "change_history": [
+      {
+        "timestamp": "2026-02-17T17:09:15.005024",
+        "changes": [
+          {
+            "field": "title",
+            "old": "apple",
+            "new": "qwqw"
+          },
+          {
+            "field": "description",
+            "old": "",
+            "new": ""
+          },
+          {
+            "field": "priority",
+            "old": "medium",
+            "new": "medium"
+          },
+          {
+            "field": "category",
+            "old": "General",
+            "new": "General"
+          },
+          {
+            "field": "due_date",
+            "old": "",
+            "new": ""
+          },
+          {
+            "field": "tags",
+            "old": [],
+            "new": []
+          },
+          {
+            "field": "subtasks",
+            "old": [],
+            "new": []
+          }
+        ]
+      }
+    ]
+  },
+  "42": {
+    "id": 42,
     "user_id": "user_5",
-    "title": "hkjhk",
+    "title": "ggfh",
     "description": "",
     "completed": false,
     "priority": "medium",
@@ -60,7 +182,103 @@
     "status": "todo",
     "subtasks": [],
     "reminder": "",
-    "created_at": "2026-02-15T21:07:01.911675",
-    "updated_at": "2026-02-15T21:07:01.911706"
+    "created_at": "2026-02-16T01:23:12.955533",
+    "updated_at": "2026-02-16T01:23:12.955547"
+  },
+  "43": {
+    "id": 43,
+    "user_id": "user_5",
+    "title": "bsmb",
+    "description": "",
+    "completed": false,
+    "priority": "medium",
+    "category": "",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-16T09:58:52.125199",
+    "updated_at": "2026-02-16T09:58:52.125219"
+  },
+  "44": {
+    "id": 44,
+    "user_id": "user_2",
+    "title": "jrhkwjrhjkrh",
+    "description": "",
+    "completed": false,
+    "priority": "medium",
+    "category": "",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-16T11:35:24.901331",
+    "updated_at": "2026-02-16T11:35:24.901367"
+  },
+  "45": {
+    "id": 45,
+    "user_id": "user_2",
+    "title": "ssh",
+    "description": "",
+    "completed": false,
+    "priority": "medium",
+    "category": "",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-16T11:43:01.924888",
+    "updated_at": "2026-02-16T11:43:01.924901"
+  },
+  "54": {
+    "id": 54,
+    "user_id": "user_25",
+    "title": "mango  kro",
+    "description": "",
+    "completed": true,
+    "priority": "medium",
+    "category": "General",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-17T13:44:49.053221",
+    "updated_at": "2026-02-17T14:05:13.336380"
+  },
+  "55": {
+    "id": 55,
+    "user_id": "user_25",
+    "title": "ek mango",
+    "description": "",
+    "completed": false,
+    "priority": "medium",
+    "category": "General",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-17T13:58:00.149868",
+    "updated_at": "2026-02-17T13:58:00.149901"
+  },
+  "57": {
+    "id": 57,
+    "user_id": "user_2",
+    "title": "a sdsd",
+    "description": "",
+    "completed": false,
+    "priority": "medium",
+    "category": "General",
+    "due_date": "",
+    "tags": [],
+    "status": "todo",
+    "subtasks": [],
+    "reminder": "",
+    "created_at": "2026-02-17T16:46:16.844517",
+    "updated_at": "2026-02-17T16:46:16.844566"
   }
 }

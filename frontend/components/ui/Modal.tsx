@@ -1,7 +1,4 @@
-// components/ui/Modal.tsx
-
-import { ReactNode, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { ReactNode, useEffect, useRef } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,6 +8,8 @@ interface ModalProps {
 }
 
 export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -18,44 +17,47 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
+      // Focus trap inside modal
+      modalRef.current?.focus();
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = '';
     };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm animate-fade-in"
-        onClick={onClose}
-      />
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-deep-brown/30 backdrop-blur-sm fade-in-up" />
 
-      {/* Modal Card */}
       <div
-        className="relative bg-slate-900/50 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-card-hover w-full max-w-md z-10 overflow-hidden animate-scale-in"
+        ref={modalRef}
+        tabIndex={-1}
+        className="relative bg-white/95 backdrop-blur-xl border-2 border-amber-200 rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto fade-in-up"
         onClick={(e) => e.stopPropagation()}
+        style={{ scrollbarWidth: 'thin', scrollbarColor: '#d4a543 #f5f5f5' }}
       >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-white">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-white/80 hover:text-white transition-colors"
-            aria-label="Close modal"
-          >
-            <X size={24} />
-          </button>
+        <div className="bg-gradient-to-r from-amber-400 to-amber-300 px-8 py-6 sticky top-0 z-10">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-deep-brown font-display">
+              {title}
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-deep-brown/70 hover:text-deep-brown transition-colors text-2xl leading-none"
+              aria-label="Close modal"
+            >
+              ×
+            </button>
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="p-6">
+        <div className="p-8">
           {children}
         </div>
       </div>

@@ -2,33 +2,33 @@ import { User, Task, AuthResponse } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-console.log('🔵 API Base URL:', API_BASE_URL);
+const DEBUG = true;
 
 const handleResponse = async (response: Response) => {
-  console.log('🔵 API Response:', response.status, response.url);
+  if (DEBUG) console.log('🔵 API Response:', response.status, response.url);
 
   if (response.status === 401) {
-    console.error('🔴 401 Unauthorized - removing token and redirecting');
+    if (DEBUG) console.error('🔴 401 Unauthorized');
     if (typeof window !== 'undefined') {
-      const currentToken = localStorage.getItem('token');
-      console.error('🔴 Token that was removed:', currentToken?.substring(0, 20) + '...');
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
     throw new Error('Unauthorized');
   }
-  
+
   if (!response.ok) {
     let errorMessage = 'An error occurred';
     try {
       const error = await response.json();
       errorMessage = error.detail || JSON.stringify(error);
-    } catch {
+      if (DEBUG) console.error('🔴 Error response:', error);
+    } catch (e) {
       errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      if (DEBUG) console.error('🔴 Error parsing failed:', e);
     }
     throw new Error(errorMessage);
   }
-  
+
   return response.json();
 };
 
@@ -49,42 +49,35 @@ const getHeaders = (): HeadersInit => {
 
 export const authAPI = {
   signup: async (name: string, email: string, password: string): Promise<AuthResponse> => {
-    console.log('🔵 Signup request:', { name, email });
+    const url = `${API_BASE_URL}/api/auth/signup`;
+    if (DEBUG) console.log('🔵 Sending signup request to:', url);
+    if (DEBUG) console.log('🔵 Request data:', { name, email, password: '***' });
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
 
-      console.log('🔵 Signup response status:', response.status);
-      console.log('🔵 Signup response headers:', [...response.headers.entries()]);
-      
-      const data = await handleResponse(response);
-      console.log('✅ Signup success:', data);
-      return data;
-    } catch (error) {
-      console.error('🔴 Signup fetch error:', error);
+      if (DEBUG) console.log('🔵 Response status:', response.status, response.statusText);
+      return await handleResponse(response);
+    } catch (error: any) {
+      if (DEBUG) console.error('🔴 Signup fetch error:', error);
       if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new Error('Network error: Could not connect to the server. Please check if the backend is running on http://localhost:8001');
+        throw new Error('Network error: Could not connect to the server. Make sure backend is running on port 8000.');
       }
       throw error;
     }
   },
 
   login: async (email: string, password: string): Promise<AuthResponse> => {
-    console.log('🔵 Login request:', { email });
-    
     const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
-    
-    const data = await handleResponse(response);
-    console.log('✅ Login success:', data);
-    return data;
+    return await handleResponse(response);
   },
 
   getCurrentUser: async (): Promise<User> => {
@@ -104,9 +97,6 @@ export const authAPI = {
 
 export const tasksAPI = {
   getAll: async (userId: string, filters?: { completed?: boolean, priority?: string, category?: string, search?: string }): Promise<Task[]> => {
-    console.log('🔵 Fetching tasks for user:', userId, 'with filters:', filters);
-
-    // Build query parameters from filters
     const queryParams = new URLSearchParams();
     if (filters) {
       if (filters.completed !== undefined) queryParams.append('completed', String(filters.completed));
@@ -118,25 +108,16 @@ export const tasksAPI = {
     const queryString = queryParams.toString();
     const url = `${API_BASE_URL}/api/${userId}/tasks${queryString ? '?' + queryString : ''}`;
 
-    console.log('Fetching from URL:', url);
-    console.log('Using headers:', getHeaders());
-
     const response = await fetch(url, {
       headers: getHeaders(),
     });
 
-    console.log('Response status:', response.status);
-    console.log('Response headers:', [...response.headers.entries()]);
-
     const data = await handleResponse(response);
-    
-    // Ensure we return an array
+
     if (!Array.isArray(data)) {
-      console.error('API returned non-array data:', data);
       return [];
     }
-    
-    console.log('✅ Tasks fetched:', data.length);
+
     return data;
   },
 

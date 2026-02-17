@@ -1,5 +1,3 @@
-// components/tasks/TaskForm.tsx
-
 import { useState } from 'react';
 
 interface TaskFormProps {
@@ -57,77 +55,87 @@ export const TaskForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div>
-        <label className="block text-slate-300 font-semibold mb-2 text-lg">Task Title</label>
+    <form onSubmit={handleSubmit} className="space-y-7">
+      <div className="space-y-3">
+        <label className="block mb-2.5 text-sm font-bold text-deep-brown font-heading tracking-wide uppercase">
+          Task Title
+        </label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter task title"
+          placeholder="What needs to be done?"
           required
-          className="w-full px-4 py-3 rounded-xl border-2 border-slate-600 bg-slate-800/60 text-slate-50 placeholder-slate-500 transition-all duration-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 text-base"
+          className="input-field text-base"
         />
       </div>
 
-      <div className="w-full">
-        <label className="block text-slate-300 font-semibold mb-2 text-lg">Description</label>
+      <div className="space-y-3">
+        <label className="block mb-2.5 text-sm font-bold text-deep-brown font-heading tracking-wide uppercase">
+          Description
+        </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Enter task description (optional)"
-          rows={4}
-          className="w-full px-4 py-3 rounded-xl border-2 border-slate-600 bg-slate-800/60 text-slate-50 placeholder-slate-500 transition-all duration-200 outline-none resize-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20"
+          placeholder="Add more details..."
+          rows={3}
+          className="input-field resize-none text-base"
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-slate-300 font-semibold mb-2 text-lg">Priority</label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="space-y-3">
+          <label className="block mb-2.5 text-sm font-bold text-deep-brown font-heading tracking-wide uppercase">
+            Priority
+          </label>
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border-2 border-slate-600 bg-slate-800/60 text-slate-50 transition-all duration-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20"
+            className="input-field text-base cursor-pointer"
           >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="low">Low Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="high">High Priority</option>
           </select>
         </div>
 
-        <div>
-          <label className="block text-slate-300 font-semibold mb-2 text-lg">Category</label>
+        <div className="space-y-3">
+          <label className="block mb-2.5 text-sm font-bold text-deep-brown font-heading tracking-wide uppercase">
+            Category
+          </label>
           <input
             type="text"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="Enter category (optional)"
-            className="w-full px-4 py-3 rounded-xl border-2 border-slate-600 bg-slate-800/60 text-slate-50 placeholder-slate-500 transition-all duration-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20"
+            placeholder="e.g., Work, Personal"
+            className="input-field text-base"
           />
         </div>
       </div>
 
-      <div>
-        <label className="block text-slate-300 font-semibold mb-2 text-lg">Due Date</label>
+      <div className="space-y-3">
+        <label className="block mb-2.5 text-sm font-bold text-deep-brown font-heading tracking-wide uppercase">
+          Due Date
+        </label>
         <input
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl border-2 border-slate-600 bg-slate-800/60 text-slate-50 transition-all duration-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20"
+          className="input-field text-base"
         />
       </div>
 
       {error && (
-        <div className="text-red-500 text-base font-medium py-2">
-          {error}
+        <div className="p-5 bg-gradient-to-r from-rose-100 to-rose-50 border-2 border-rose-300 rounded-2xl text-rose-800 font-bold fade-in-up shadow-lg shadow-rose-200/50">
+          ⚠️ {error}
         </div>
       )}
 
-      <div className="flex space-x-3 pt-2">
+      <div className="flex gap-4 pt-3">
         <button
           type="submit"
           disabled={isLoading}
-          className="flex-1 py-3 text-lg font-semibold text-white rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 shadow-glow-primary hover:scale-102 hover:brightness-110 transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 btn-primary text-base shadow-2xl shadow-amber-300/30"
         >
           {isLoading ? 'Saving...' : submitLabel}
         </button>
@@ -136,7 +144,7 @@ export const TaskForm = ({
           <button
             type="button"
             onClick={onCancel}
-            className="py-3 px-6 text-lg font-semibold text-slate-300 border-2 border-slate-600 rounded-xl hover:bg-slate-700/50 transition-all duration-200"
+            className="flex-1 btn-primary text-base shadow-2xl shadow-amber-300/30 bg-gradient-to-r from-rose-600 via-rose-500 to-rose-600 hover:from-rose-700 hover:to-rose-600"
           >
             Cancel
           </button>

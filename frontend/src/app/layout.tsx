@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ToastProvider } from './context/toast-context';
+import { ToastProvider } from '@/context/toast-context';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
-import { Star } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function SignupPage() {
@@ -12,22 +11,41 @@ export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const { signup, isAuthenticated } = useAuth()
+  const { signup, isAuthenticated, logout } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard')
-    }
-  }, [isAuthenticated, router])
+    console.log('🔵 Signup Page - isAuthenticated:', isAuthenticated)
+    // If already logged in, show a message but don't auto-redirect
+  }, [isAuthenticated])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!name || !email || !password) {
+      toast.error('Please fill all fields')
+      return
+    }
+
+    if (password.length < 8) {
+      toast.error('Password must be at least 8 characters')
+      return
+    }
+
     setLoading(true)
 
     try {
-      await signup(name, email, password)
-      toast.success('Account created successfully!')
+      console.log('🔵 Starting signup process...', { name, email })
+      const result = await signup(name, email, password)
+      console.log('✅ Signup function completed, result:', result)
+
+      toast.success('Account created successfully! Redirecting to dashboard...')
+
+      // Wait for state to update
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      console.log('🔵 Navigating to dashboard...')
+      // Use router.push instead of window.location.href to maintain React state
       router.push('/dashboard')
     } catch (error: any) {
       console.error('Signup error:', error)
@@ -38,74 +56,119 @@ export default function SignupPage() {
     }
   }
 
-  if (isAuthenticated) {
-    return null
-  }
-
   return (
-    <div className="min-h-screen bg-[#3E2723] text-[#FFE082] flex items-center justify-center p-4">
-      <div className="glass-card rounded-3xl p-8 max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[#FFC107] to-[#FFB300] flex items-center justify-center shadow-lg mb-4">
-            <Star className="w-10 h-10 text-[#3E2723]" />
+    <div className="min-h-screen flex items-center justify-center p-4 py-12 relative overflow-hidden">
+      {/* Ultra Luxury Animated Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-amber-400/10 to-amber-300/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-10 left-1/4 w-[500px] h-[500px] bg-gradient-to-br from-amber-300/10 to-amber-200/10 rounded-full blur-3xl animate-float stagger-2" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-amber-200/6 to-amber-300/6 rounded-full blur-3xl" />
+
+        {/* Multiple Sparkle Effects */}
+        <div className="absolute top-1/4 right-1/4 w-3 h-3 bg-gradient-to-br from-amber-400 to-amber-300 rounded-full animate-pulse shadow-lg shadow-amber-400/50" />
+        <div className="absolute top-1/3 left-1/3 w-2 h-2 bg-gradient-to-br from-amber-300 to-amber-200 rounded-full animate-pulse stagger-1 shadow-lg shadow-amber-300/50" />
+        <div className="absolute bottom-1/3 right-1/3 w-2.5 h-2.5 bg-gradient-to-br from-amber-400 to-amber-300 rounded-full animate-pulse stagger-2 shadow-lg shadow-amber-400/50" />
+        <div className="absolute top-2/3 left-1/4 w-2 h-2 bg-gradient-to-br from-amber-300 to-amber-200 rounded-full animate-pulse stagger-3 shadow-lg shadow-amber-300/50" />
+      </div>
+
+      {/* Ultra Luxury Signup Card */}
+      <div className="glass-card p-14 md:p-16 max-w-lg w-full relative z-10 fade-in-up">
+        {/* Diamond Logo with Glow */}
+        <div className="text-center mb-14">
+          <div className="w-28 h-28 mx-auto mb-10 rounded-[2.5rem] bg-gradient-to-br from-amber-500 via-amber-400 to-amber-500 flex items-center justify-center shadow-2xl shadow-amber-300/60 animate-float luxury-glow relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/30 to-transparent animate-pulse" />
+            <span className="text-6xl relative z-10">💎</span>
           </div>
-          <h1 className="text-3xl font-bold text-[#FFC107] mb-2">Create Account</h1>
-          <p className="text-[#FFE082]">Start managing your tasks</p>
+          <h1 className="text-6xl font-display font-black heading-glow heading-shimmer heading-underline-double" data-text="Create Account">
+            Create Account
+          </h1>
+          <p className="text-deep-brown/70 font-heading text-xl font-semibold">
+            Start your journey with us
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-[#FFE082] font-semibold mb-2">Name</label>
+        <form onSubmit={handleSubmit} className="space-y-7 w-full">
+          <div className="space-y-3 w-full">
+            <label className="block mb-2.5 text-sm font-bold text-deep-brown font-heading tracking-wide uppercase">
+              Full Name
+            </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
+              placeholder="John Doe"
               required
-              className="w-full px-4 py-3 rounded-lg border-2 border-[#8D6E63] bg-[#5D4037] text-[#FFE082] placeholder-[#BCAAA4] focus:outline-none focus:border-[#FFC107]"
+              className="input-field text-base w-full"
             />
           </div>
 
-          <div>
-            <label className="block text-[#FFE082] font-semibold mb-2">Email</label>
+          <div className="space-y-3 w-full">
+            <label className="block mb-2.5 text-sm font-bold text-deep-brown font-heading tracking-wide uppercase">
+              Email Address
+            </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="w-full px-4 py-3 rounded-lg border-2 border-[#8D6E63] bg-[#5D4037] text-[#FFE082] placeholder-[#BCAAA4] focus:outline-none focus:border-[#FFC107]"
+              className="input-field text-base w-full"
             />
           </div>
 
-          <div>
-            <label className="block text-[#FFE082] font-semibold mb-2">Password</label>
+          <div className="space-y-3 w-full">
+            <label className="block mb-2.5 text-sm font-bold text-deep-brown font-heading tracking-wide uppercase">
+              Password
+            </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="•••••••"
+              placeholder="••••••••"
               required
               minLength={8}
-              className="w-full px-4 py-3 rounded-lg border-2 border-[#8D6E63] bg-[#5D4037] text-[#FFE082] placeholder-[#BCAAA4] focus:outline-none focus:border-[#FFC107]"
+              className="input-field text-base w-full"
             />
+            <p className="mt-2 text-xs text-deep-brown/60 font-bold">
+              Must be at least 8 characters
+            </p>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 text-lg font-semibold text-[#3E2723] rounded-lg bg-gradient-to-r from-[#FFC107] to-[#FFE082] hover:brightness-110 transition-all disabled:opacity-50"
-          >
-            {loading ? 'Creating...' : 'Sign Up'}
-          </button>
+          {/* Sign Up Button - Centered */}
+          <div className="text-center mt-10">
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary text-xl shadow-2xl hover:shadow-amber-300/60 premium-border inline-flex items-center justify-center px-16"
+            >
+              {loading ? 'Creating...' : 'Sign Up'}
+              <span className="text-3xl ml-2">→</span>
+            </button>
+          </div>
+
+          {/* Fallback button if automatic redirect doesn't work */}
+          {loading && (
+            <div className="mt-6 text-center">
+              <p className="text-sm text-deep-brown/70 mb-3">Creating your account...</p>
+              <div className="spinner" style={{ margin: '0 auto' }}></div>
+            </div>
+          )}
         </form>
 
-        <p className="text-center mt-6 text-[#FFE082]">
-          Already have an account?{' '}
-          <Link href="/login" className="text-[#FFC107] font-semibold hover:underline">
+        {/* Already have account text - with premium Login button */}
+        <div className="text-center mt-10">
+          <p className="text-deep-brown/70 font-semibold text-lg mb-3">
+            Already have an account?
+          </p>
+          <button
+            onClick={() => router.push('/login')}
+            className="btn-primary text-lg shadow-2xl hover:shadow-amber-300/60 premium-border inline-flex items-center justify-center px-8"
+          >
             Login
-          </Link>
-        </p>
+            <span className="text-2xl ml-2">→</span>
+          </button>
+        </div>
       </div>
     </div>
   )
