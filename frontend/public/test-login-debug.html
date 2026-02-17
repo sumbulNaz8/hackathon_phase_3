@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test - Debug</title>
+    <style>
+        body {
+            font-family: system-ui;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #fdf8f3 0%, #f8fafc 100%);
+        }
+        .test-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #d4a543 0%, #e8c87a 100%);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            color: #1a0f0d;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .log {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #00ff00; }
+        .error { color: #ff4444; }
+        .info { color: #4488ff; }
+        input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            width: 250px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Login Debug Tool</h1>
+
+    <div class="test-card">
+        <h2>Step 1: Test API Connectivity</h2>
+        <button onclick="testAPI()">Test API Connection</button>
+        <div id="apiResult"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>Step 2: Test Login</h2>
+        <input type="email" id="email" value="dashboard@test.com" placeholder="Email">
+        <input type="password" id="password" value="test123456" placeholder="Password">
+        <br><br>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>Step 3: Test Token Validation</h2>
+        <button onclick="testToken()">Test /api/auth/me</button>
+        <div id="tokenResult"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>Live Console Log</h2>
+        <div class="log" id="console"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://172.31.124.183:8000';
+
+        function log(message, type = 'info') {
+            const consoleEl = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            consoleEl.innerHTML += `<div class="${colorClass}">[${timestamp}] ${message}</div>`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        async function testAPI() {
+            const resultEl = document.getElementById('apiResult');
+            log('Testing API connection...', 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    log(`✅ API is reachable! Health: ${data.status}`, 'success');
+                    resultEl.innerHTML = `<span style="color: green">✅ API Connected! Status: ${data.status}</span>`;
+                } else {
+                    log(`❌ API returned status: ${response.status}`, 'error');
+                    resultEl.innerHTML = `<span style="color: red">❌ API Error: ${response.status}</span>`;
+                }
+            } catch (error) {
+                log(`❌ Cannot connect to API: ${error.message}`, 'error');
+                resultEl.innerHTML = `<span style="color: red">❌ Connection Failed: ${error.message}</span>`;
+            }
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultEl = document.getElementById('loginResult');
+
+            log(`Attempting login for: ${email}`, 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('user_id', data.user.id);
+                    log(`✅ Login successful! User ID: ${data.user.id}`, 'success');
+                    log(`Token saved to localStorage`, 'info');
+                    resultEl.innerHTML = `<span style="color: green">✅ Login Success! User: ${data.user.name}</span>`;
+                } else {
+                    log(`❌ Login failed: ${data.detail}`, 'error');
+                    resultEl.innerHTML = `<span style="color: red">❌ Login Failed: ${data.detail}</span>`;
+                }
+            } catch (error) {
+                log(`❌ Login error: ${error.message}`, 'error');
+                resultEl.innerHTML = `<span style="color: red">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testToken() {
+            const token = localStorage.getItem('token');
+            const resultEl = document.getElementById('tokenResult');
+
+            if (!token) {
+                log('❌ No token found in localStorage', 'error');
+                resultEl.innerHTML = `<span style="color: red">❌ No token! Please login first.</span>`;
+                return;
+            }
+
+            log(`Testing token validation...`, 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    log(`✅ Token valid! User: ${data.email}`, 'success');
+                    resultEl.innerHTML = `<span style="color: green">✅ Authenticated! User: ${data.name} (${data.email})</span>`;
+                } else {
+                    log(`❌ Token invalid: ${data.detail}`, 'error');
+                    resultEl.innerHTML = `<span style="color: red">❌ Invalid Token</span>`;
+                }
+            } catch (error) {
+                log(`❌ Token validation error: ${error.message}`, 'error');
+                resultEl.innerHTML = `<span style="color: red">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        // Auto-test on load
+        window.onload = () => {
+            log('🔧 Debug tool loaded', 'info');
+            log(`API URL: ${API_URL}`, 'info');
+            testAPI();
+        };
+    </script>
+</body>
+</html>
