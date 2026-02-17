@@ -194,5 +194,12 @@
     "email": "unique1771337325@test.com",
     "password_hash": "$2b$12$kn9ougEDsSLGn0eA.uS6P.HKEn29UxZ.zt1blWCAnUNx8FCOV8p2u",
     "created_at": "2026-02-17T14:08:46.521950"
+  },
+  "scitforte@gmail.com": {
+    "id": "user_29",
+    "name": "sum",
+    "email": "scitforte@gmail.com",
+    "password_hash": "$2b$12$c93qjfiN/oSx5FxvZXyBAOouxz9HxrdA7lPCWB6O6WkBHyEZGzeb2",
+    "created_at": "2026-02-17T22:30:41.314255"
   }
 }
